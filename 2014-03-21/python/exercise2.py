@@ -69,12 +69,19 @@ interior2 = T([1,2,3])([15,20.5,H3int])(interior2)
 interior3 = CUBOID([0.5,9])
 interior3 = T([1,2,3])([31,20.5,H3int])(interior3)
 
+interior2_v1 = CUBOID([23,0,H4-H3])
+interior2_v1 = COLOR(OCRA3)(T([1,2,3])([12,20,H3int])(interior2_v1))
+interior2_v2 = COLOR(OCRA3)(T([2])([9.5])(interior2_v1))
+
+interior3_v1 = CUBOID([0,9,H4-H3])
+interior3_v1 = COLOR(OCRA3)(T([1,2,3])([31,20,H3int])(interior3_v1))
+
 interior1b = T([2])([9])(interior1)
 interior2b = T([2])([5.5])(interior2)
 
 interiorTOT = COLOR(OCRA3A)(STRUCT([interior1, interior2, interior3, interior1b, interior2b]))
 
-floor3 = STRUCT([floor3base,columnsTOT,interiorTOT])
+floor3 = STRUCT([floor3base,columnsTOT,interiorTOT,interior2_v1,interior2_v2,interior3_v1])
 
 #floor4: top of the columns (roof)
 floor4a = T([1,2])([2,2])((CUBOID([34,14])))
