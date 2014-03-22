@@ -83,22 +83,32 @@ floor4b = CUBOID([38,18])
 floor4 = DIFFERENCE([floor4b,floor4a])
 floor4 = T([1,2,3])([6,16,H4])(PROD([floor4, Q(1)]))
 
-#floor4int = T([3])([H4-H3])(interiorTOT)
 floor4coltop = CUBOID([2,9.5,1])
 floor4coltopfront = T([1,2,3])([12,20,H4])(floor4coltop)
 floor4coltoprear = T([1,2,3])([33,20,H4])(floor4coltop)
 floor4_3d = COLOR(OCRA4)((STRUCT([floor4,floor4coltopfront,floor4coltoprear])))
 
+#top triangle
 npts = [[0,0,0],[0,18,0],[0,9,4],
 		[-2,0,0],[-2,18,0],[-2,9,4]]
-
 tri = JOIN(AA(MK)(npts))
-tri = COLOR(OCRA8)(T([1,2,3])([8,16,H4+3])(tri))
+tri = T([1,2,3])([8,16,H4+3])(tri)
 
+tri_small1 = S([1,2,3])([0.2,0.8,0.8])(tri)
+tri_small1 = T([1,2,3])([4.7,5,3.5])(tri_small1)
+tri_small2 = T([1,2,3])([2,0,0])(tri_small1)
+#relief
+tridiff = COLOR(OCRA8)(DIFFERENCE([tri,tri_small1,tri_small2]))
+
+#triangle supporter
 trave = CUBOID([-2,18,2])
-trave = COLOR(OCRA7)(T([1,2,3])([8,16,H4+1])(trave))
+trave = T([1,2,3])([8,16,H4+1])(trave)
+trave_small1 = S([1,2,3])([0.2,0.97,0.8])(trave)
+trave_small1 = T([1,2,3])([4.7,0.74,3])(trave_small1)
+trave_small2 = T([1,2,3])([2,0,0])(trave_small1)
+travediff = COLOR(OCRA7)(DIFFERENCE([trave,trave_small1,trave_small2]))
 
-north = STRUCT([tri,trave])
+north = STRUCT([tridiff,travediff])
 
 #south plan
 south = T([1])([36])(north)
@@ -106,12 +116,12 @@ south = T([1])([36])(north)
 #north south - together
 vertical = STRUCT([north, south])
 
-two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d])
+two_and_half_model = STRUCT([floor1_3d,floor2_3d,floor3_3d,floor4_3d])
 solidmodel3d = STRUCT([two_and_half_model,vertical])
 
 #final view
 VIEW(solidmodel3d)
-VIEW(SKELETON(1)(solidmodel3d))
+#VIEW(SKELETON(1)(solidmodel3d))
 
 
 exit()
