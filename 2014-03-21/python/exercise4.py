@@ -13,11 +13,12 @@ OCRA1 = rgb([160, 110, 0.0])
 OCRA2 = rgb([180, 130, 0.0])
 OCRA3 = rgb([200, 150, 0.0])
 OCRA3A = rgb([220, 170, 0.0])
-OCRA4 = rgb([230, 190, 0.0])
-OCRA5 = rgb([240, 210, 50])
-OCRA6 = rgb([240, 210, 80])
-OCRA7 = rgb([240, 220, 110])
-OCRA8 = rgb([255, 220, 140])
+OCRA4 = rgb([230, 180, 0.0])
+OCRA5 = rgb([237, 190, 0.0])
+OCRA6 = rgb([244, 200, 0.0])
+OCRA7 = rgb([250, 210, 0.0])
+OCRA8 = rgb([255, 220, 0.0])
+OCRA9 = rgb([80, 40, 0.0])
 
 #def heights of the floors
 H1 = 1
@@ -32,12 +33,12 @@ pts0 = [[0,0],[0,50],[50,50],[50,0]]
 floor0 = JOIN(AA(MK)(pts0))
 floor0_3d = COLOR(OCRA0)(PROD([floor0, Q(1)]))
 
-#floor1: 1st stair
+#floor1: 1st big stair
 pts1 = [[0,0],[0,20],[40,20],[40,0]]
 floor1 = JOIN(AA(MK)(pts1))
 floor1_3d = COLOR(OCRA1)(T([1,2,3])([5,15,H1])(PROD([floor1, Q(1)])))
 
-#floor2: 2nd stair
+#floor2: 2nd big stair
 pts2 = [[0,0],[0,19],[39,19],[39,0]]
 floor2 = JOIN(AA(MK)(pts2))
 floor2_3d = COLOR(OCRA2)(T([1,2,3])([5.5,15.5,H2])(PROD([floor2, Q(1)])))
@@ -48,7 +49,7 @@ floor3base = COLOR(OCRA3)(JOIN(AA(MK)(pts3)))
 floor3base = T([1,2,3])([6,16,H3])(floor3base)
 
 #column
-column = COLOR(OCRA3A)(JOIN(CYLINDER([0.8,H4-H3])(10)))
+column = COLOR(OCRA3A)(JOIN(CYLINDER([0.8,H4-H3])(20)))
 column = T([1,2,3])([7,17,H3col])(column)
 
 #cloning and positioning columns
@@ -116,7 +117,18 @@ south = T([1])([36])(north)
 #north south - together
 vertical = STRUCT([north, south])
 
-two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d])
+#stairs
+stairs1 = STRUCT([T([1])([1*i])(CUBOID([1,5,i*0.12]))for i in range(1,10)])
+stairs1 = COLOR(OCRA0)(T([1,2,3])([-10,18,0])(stairs1))
+stairs2 = T([1,2,3])([0,9,0])(stairs1)
+borderstairs = STRUCT([T([1])([1*i])(CUBOID([1,0.5,i*0.2]))for i in range(1,10)])
+borderstairs = T([1,2,3])([-10,17.5,0])(borderstairs)
+borderstairs2 = T([1,2,3])([0,5.5,0])(borderstairs)
+stairs_r = STRUCT([stairs1,COLOR(OCRA9)(borderstairs),COLOR(OCRA9)(borderstairs2)])
+stairs_l = T([1,2,3])([0,10,0])(stairs_r)
+
+stairs = STRUCT([stairs_r,stairs_l])
+two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d,stairs])
 solid_model_3D = STRUCT([two_and_half_model,vertical])
 
 #final view

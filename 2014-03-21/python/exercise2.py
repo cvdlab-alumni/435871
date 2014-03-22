@@ -124,11 +124,11 @@ east = T([2])([18])(west)
 vertical = STRUCT([north,south,west,east])
 
 two_and_half_model = STRUCT([floor0,floor1,floor2,floor3,floor4])
-mockup3d = STRUCT([two_and_half_model,vertical])
+mock_up_3D = STRUCT([two_and_half_model,vertical])
 
 #final view
-VIEW(mockup3d)
-VIEW(SKELETON(1)(mockup3d))
+VIEW(mock_up_3D)
+VIEW(SKELETON(1)(mock_up_3D))
 
 
 exit()
