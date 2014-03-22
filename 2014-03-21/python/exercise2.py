@@ -1,6 +1,6 @@
 from pyplasm import *
 
-#Homework 1 - exercise1
+#Homework 1 - exercise2
 #Author: Davide Violante
 
 #function for custom colors with 0:255 numbers
@@ -14,6 +14,10 @@ OCRA2 = rgb([180, 130, 0.0])
 OCRA3 = rgb([200, 150, 0.0])
 OCRA3A = rgb([220, 170, 0.0])
 OCRA4 = rgb([240, 190, 0.0])
+OCRA5 = rgb([255, 220, 80])
+OCRA6 = rgb([255, 240, 100])
+OCRA7 = rgb([255, 255, 130])
+OCRA8 = rgb([255, 255, 160])
 
 #def heights of the floors
 H1 = 1
@@ -84,11 +88,47 @@ floor4coltopfront = T([1,2,3])([12,20.5,H4])(floor4coltop)
 floor4coltoprear = T([1,2,3])([33,20.5,H4])(floor4coltop)
 floor4 = COLOR(OCRA4)((STRUCT([floor4,floor4int,floor4coltopfront,floor4coltoprear])))
 
+#north plan
+northcols = CUBOID([0,1.6,H4-H3])
+northcols = T([1,2,3])([6,16.2,H3])(northcols)
+northcols = COLOR(OCRA5)(STRUCT([northcols, T(2)(3.2)]*6))
+
+npts = [[0,0,0],[0,18,0],[0,9,4]]
+tri = JOIN(AA(MK)(npts))
+tri = COLOR(OCRA8)(T([1,2,3])([6,16,H4+3])(tri))
+
+trave = CUBOID([0,18,2])
+trave = COLOR(OCRA7)(T([1,2,3])([6,16,H4+1])(trave))
+
+ntravecols = CUBOID([0,18,1])
+ntravecols = COLOR(OCRA6)(T([1,2,3])([6,16,H4])(ntravecols))
+
+north = STRUCT([northcols,tri,trave,ntravecols])
+
+#south plan
+south = T([1])([38])(north)
+
+#west plan
+westcols = CUBOID([1.6,0,H4-H3])
+westcols = T([1,2,3])([6.2,16,H3])(westcols)
+westcols = COLOR(OCRA5)(STRUCT([westcols, T(1)(3.28)]*12))
+wtravecols = CUBOID([38,0,1])
+wtravecols = COLOR(OCRA6)(T([1,2,3])([6,16,H4])(wtravecols))
+
+west = STRUCT([westcols,wtravecols])
+
+#east plan
+east = T([2])([18])(west)
+
+#north south east west - together
+vertical = STRUCT([north,south,west,east])
+
 two_and_half_model = STRUCT([floor0,floor1,floor2,floor3,floor4])
+mockup3d = STRUCT([two_and_half_model,vertical])
 
 #final view
-VIEW(two_and_half_model)
-VIEW(SKELETON(1)(two_and_half_model))
+VIEW(mockup3d)
+VIEW(SKELETON(1)(mockup3d))
 
 
 exit()

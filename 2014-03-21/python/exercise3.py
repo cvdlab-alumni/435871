@@ -1,6 +1,6 @@
 from pyplasm import *
 
-#Homework 1 - exercise1
+#Homework 1 - exercise3
 #Author: Davide Violante
 
 #function for custom colors with 0:255 numbers
@@ -14,6 +14,10 @@ OCRA2 = rgb([180, 130, 0.0])
 OCRA3 = rgb([200, 150, 0.0])
 OCRA3A = rgb([220, 170, 0.0])
 OCRA4 = rgb([240, 190, 0.0])
+OCRA5 = rgb([255, 220, 80])
+OCRA6 = rgb([255, 240, 100])
+OCRA7 = rgb([255, 255, 130])
+OCRA8 = rgb([255, 255, 160])
 
 #def heights of the floors
 H1 = 1
@@ -25,17 +29,18 @@ H4 = 13
 
 #floor0: sand
 pts0 = [[0,0],[0,50],[50,50],[50,0]]
-floor0 = COLOR(OCRA0)(JOIN(AA(MK)(pts0)))
+floor0 = JOIN(AA(MK)(pts0))
+floor0_3d = COLOR(OCRA0)(PROD([floor0, Q(1)]))
 
 #floor1: 1st stair
 pts1 = [[0,0],[0,20],[40,20],[40,0]]
-floor1 = COLOR(OCRA1)(JOIN(AA(MK)(pts1)))
-floor1 = T([1,2,3])([5,15,H1])(floor1)
+floor1 = JOIN(AA(MK)(pts1))
+floor1_3d = COLOR(OCRA1)(T([1,2,3])([5,15,H1])(PROD([floor1, Q(1)])))
 
 #floor2: 2nd stair
 pts2 = [[0,0],[0,19],[39,19],[39,0]]
-floor2 = COLOR(OCRA2)(JOIN(AA(MK)(pts2)))
-floor2 = T([1,2,3])([5.5,15.5,H2])(floor2)
+floor2 = JOIN(AA(MK)(pts2))
+floor2_3d = COLOR(OCRA2)(T([1,2,3])([5.5,15.5,H2])(PROD([floor2, Q(1)])))
 
 #floor3: interior and columns
 pts3 = [[0,0],[0,18],[38,18],[38,0]]
@@ -84,11 +89,48 @@ floor4coltopfront = T([1,2,3])([12,20.5,H4])(floor4coltop)
 floor4coltoprear = T([1,2,3])([33,20.5,H4])(floor4coltop)
 floor4 = COLOR(OCRA4)((STRUCT([floor4,floor4int,floor4coltopfront,floor4coltoprear])))
 
-two_and_half_model = STRUCT([floor0,floor1,floor2,floor3,floor4])
+#north plan
+northcols = CUBOID([0,1.6,H4-H3])
+northcols = T([1,2,3])([6,16.2,H3])(northcols)
+northcols = COLOR(OCRA5)(STRUCT([northcols, T(2)(3.2)]*6))
+
+npts = [[0,0,0],[0,18,0],[0,9,4]]
+tri = JOIN(AA(MK)(npts))
+tri = COLOR(OCRA8)(T([1,2,3])([6,16,H4+3])(tri))
+
+trave = CUBOID([0,18,2])
+trave = COLOR(OCRA7)(T([1,2,3])([6,16,H4+1])(trave))
+
+ntravecols = CUBOID([0,18,1])
+ntravecols = COLOR(OCRA6)(T([1,2,3])([6,16,H4])(ntravecols))
+
+north = STRUCT([northcols,tri,trave,ntravecols])
+
+#south plan
+south = T([1])([38])(north)
+
+#west plan
+westcols = CUBOID([1.6,0,H4-H3])
+westcols = T([1,2,3])([6.2,16,H3])(westcols)
+westcols = COLOR(OCRA5)(STRUCT([westcols, T(1)(3.28)]*12))
+wtravecols = CUBOID([38,0,1])
+wtravecols = COLOR(OCRA6)(T([1,2,3])([6,16,H4])(wtravecols))
+
+west = STRUCT([westcols,wtravecols])
+
+#east plan
+east = T([2])([18])(west)
+
+#north south east west - together
+vertical = STRUCT([north,south,west,east])
+
+#---------> aggiungere floor0 alla fine
+two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3,floor4])
+mockup3d = STRUCT([two_and_half_model,vertical])
 
 #final view
-VIEW(two_and_half_model)
-VIEW(SKELETON(1)(two_and_half_model))
+VIEW(mockup3d)
+VIEW(SKELETON(1)(mockup3d))
 
 
 exit()
