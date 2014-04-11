@@ -21,13 +21,35 @@ def larSphere(radius=1):
 		return larMap([x,y,z])(domain)
 	return larSphere0
 
-#function for a ball
+#function for a ball that recall function for HALF sphere
 def larBall(radius=1):
 	def larBall0(shape=[10,10]):
 		V,CV = checkModel(larSphere(radius)(shape))
 		return V,[range(len(V))]
 	return larBall0
 
+#function for HALF cylinder
+def larCylinder(params):
+	radius,height= params
+	def larCylinder0(shape=[36,1]):
+		domain = larIntervals(shape)([PI,1])
+		V,CV = domain
+		x = lambda V : [radius*COS(p[0]) for p in V]
+		y = lambda V : [radius*SIN(p[0]) for p in V]
+		z = lambda V : [height*p[1] for p in V]
+		mapping = [x,z,y]
+		model = larMap(mapping)(domain)
+		# model = makeOriented(model)
+		return model
+	return larCylinder0
+
+#function for a Rod that recall function for HALF cylinder
+def larRod(params):
+	radius,height = params
+	def larRod0(shape=[36,1]):
+		V,CV = checkModel(larCylinder(params)(shape))
+		return V,[range(len(V))]
+	return larRod0
 
 #custom colors
 OCRA0 = rgb([140, 90, 0.0])
@@ -192,11 +214,10 @@ south = T([1])([36])(north)
 #north and south together
 vertical = STRUCT([north,south,topsides])
 
-#------> RIAGGIUNGERE floor0_3d
-two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d])
+two_and_half_model = STRUCT([floor0_3d, floor1_3d,floor2_3d,floor3_3d,floor4_3d])
 solid_model_3D = STRUCT([two_and_half_model,vertical])
 
 #final view
 VIEW(solid_model_3D)
-#VIEW(SKELETON(1)(solid_model_3D))
+VIEW(SKELETON(1)(solid_model_3D))
 
