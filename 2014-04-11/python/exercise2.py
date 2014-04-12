@@ -2,7 +2,7 @@ from pyplasm import *
 from larcc import *
 from myfont import *
 
-#Homework 1 - exercise1
+#Homework 1 - exercise2
 #Author: Davide Violante
 
 #function for custom colors with 0:255 numbers
@@ -143,15 +143,19 @@ interior3 = T([1,2,3])([31,20.5,H3int])(interior3)
 interior1b = T([2])([9])(interior1)
 interior2b = T([2])([5.5])(interior2)
 
-#HW2: EX2 -> windows!
+#HW2: EXERCISE2 -> windows!
 squarehole = CUBOID([2,1,6])
 squarehole = T([1,2,3])([27,19.7,3])(squarehole)
 halfcirclehole = STRUCT(MKPOLS(larRod([1,1])()))
 halfcirclehole = T([1,2,3])([28,19.7,9])(halfcirclehole)
 holeint = STRUCT([squarehole,halfcirclehole])
-holeint1 = DIFFERENCE([interior1,holeint])
+holeints = STRUCT(NN(4)([holeint,T(1)(-2.7)]))
+holeints2 = T(2)(9)(holeints)
 
-interiorTOT = COLOR(OCRA3A)(STRUCT([interior2, interior3, interior1b, interior2b, holeint1]))
+holeint1 = DIFFERENCE([interior1,holeints])
+holeint2 = DIFFERENCE([interior1b,holeints2])
+
+interiorTOT = COLOR(OCRA3A)(STRUCT([interior2, interior3, interior2b, holeint1, holeint2]))
 
 floor3_3d = STRUCT([columnsTOT,ctopbaseTOT,interiorTOT,blks])
 
@@ -222,11 +226,10 @@ south = T([1])([36])(north)
 #north and south together
 vertical = STRUCT([north,south,topsides])
 
-#------> RIAGGIUNGERE floor0_3d
-two_and_half_model = STRUCT([floor1_3d,floor2_3d,floor3_3d,floor4_3d])
+two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d])
 solid_model_3D = STRUCT([two_and_half_model,vertical])
 
 #final view
 VIEW(solid_model_3D)
-#VIEW(SKELETON(1)(solid_model_3D))
+VIEW(SKELETON(1)(solid_model_3D))
 
