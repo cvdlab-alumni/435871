@@ -269,5 +269,6 @@ buildings = COLOR(BLUE1)(STRUCT([b1,b2,b3,b4,b5,b6,b7,b8,b5a]))
 
 total = STRUCT([solid_model_3D,sidewalks,road,buildings])
 VIEW(total)
+VIEW(SKELETON(1)(total))
 
 

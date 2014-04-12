@@ -76,7 +76,7 @@ H4 = 13
 #floor0: sand - base
 pts0 = [[0,0],[0,50],[50,50],[50,0]]
 floor0 = JOIN(AA(MK)(pts0))
-floor0_3d = COLOR(OCRA0)(PROD([floor0, Q(1)]))
+floor0_3d = COLOR(OCRA1)(PROD([floor0, Q(1)]))
 
 #HW2: DETAILS -> miniblocks
 halfball = larBall(0.5)()
@@ -109,7 +109,7 @@ floor3base = COLOR(OCRA3)(JOIN(AA(MK)(pts3)))
 floor3base = T([1,2,3])([6,16,H3])(floor3base)
 
 #column
-column = COLOR(OCRA3A)(JOIN(CYLINDER([0.8,H4-H3])(20)))
+column = COLOR(OCRA3A)(JOIN(CYLINDER([0.8,H4-H3])(30)))
 column = T([1,2,3])([7,17,H3col])(column)
 
 #HW2: DETAILS -> column bases
@@ -238,7 +238,10 @@ solid_model_3D = STRUCT([two_and_half_model,vertical])
 
 BLACK1 = rgb([40, 40, 40])
 BLACK2 = rgb([60, 60, 60])
+GREY1 = rgb([155, 155, 155])
+GREY2 = rgb([120, 120, 120])
 BLUE1 = rgb([0, 40, 160])
+LIGHTBLUE = rgb([180, 255, 255])
 
 #sidewalk
 sidewalk1 = CUBOID([110,-3,1])
@@ -250,31 +253,86 @@ sidewalks = COLOR(BLACK2)(STRUCT([sidewalk1,sidewalk2]))
 road = CUBOID([110,-12,0.6])
 road = COLOR(BLACK1)(T([1,2])([-30,-3])(road))
 
-#road details: lamps
+#road details: lamps with lights
 lampcil = T([1,2,3])([-29,-2,1])(CYLINDER([0.2,14])(10))
+lampcilbase = T([1,2,3])([-29,-2,1])(CYLINDER([0.3,2])(10))
 lampsquare = T([1,2,3])([-29.2,-1.8,15])(CUBOID([0.4,-2,0.5]))
 
-lamp = STRUCT([lampcil,lampsquare])
+lightcone = CONE([3.5,14.5])(16)
+lightcone = MATERIAL([1,1,1,0, 0,0,0,0.1, 0,0,0,0, 0,0,0,0, 100])(lightcone)
+lightcone = T([1,2,3])([-29.2,-3.5,0.6])(lightcone)
 
+lamp = STRUCT([lampcil,lampcilbase,lampsquare,lightcone])
+lamps = COLOR(GREY1)(STRUCT(NN(10)([lamp,T(1)(12)])))
 
-#definings sizes
-BD = -10
-BH = 10
+#road details: bus stop
+bussit = T([1,2,3])([-27,-2,1])(CUBOID([4,1.5,0.5]))
+busback = T([1,2,3])([-27,-0.7,1])(CUBOID([4,0.3,4]))
+busroof = T([1,2,3])([-27,-2.4,5])(CUBOID([4,2,0.1]))
+busstop = COLOR(GREY1)(STRUCT([bussit,busback,busroof]))
 
-#buildings with random heights!
-b1 = T([1,2])([-30,-18])(CUBOID([10,BD,BH*random()]))
-b2 = T([1,2])([-17,-18])(CUBOID([8,BD,BH*random()]))
-b3 = T([1,2])([-6,-18])(CUBOID([11,BD,BH*random()]))
-b4 = T([1,2])([8,-18])(CUBOID([6,BD,BH*random()]))
+#depth of buildings
+BD = -13
+#building
+b1 = T([1,2])([-30,-18])(CUBOID([10,BD,10]))
+b2 = T([1,2])([-17,-18])(CUBOID([8,BD,20]))
+b3 = T([1,2])([-6,-18])(CUBOID([11,BD,13]))
+b4 = T([1,2])([8,-18])(CUBOID([6,BD,4]))
 b5 = T([1,2])([17,-18])(CUBOID([20,BD,30]))
 b5a = T([1,2,3])([19.5,-19,30])((CUBOID([15,BD+2,20])))
-b6 = T([1,2])([40,-18])(CUBOID([5,BD,BH*random()]))
-b7 = T([1,2])([48,-18])(CUBOID([13,BD,BH*random()]))
-b8 = T([1,2])([64,-18])(CUBOID([16,BD,BH*random()]))
+b6 = T([1,2])([40,-18])(CUBOID([5,BD,25]))
+b7 = T([1,2])([48,-18])(CUBOID([13,BD,15]))
+b8 = T([1,2])([64,-18])(CUBOID([16,BD,22]))
 
 buildings = COLOR(BLUE1)(STRUCT([b1,b2,b3,b4,b5,b6,b7,b8,b5a]))
 
-total = STRUCT([solid_model_3D,sidewalks,road,buildings,lamp])
-VIEW(total)
+details = STRUCT([sidewalks,road,buildings,lamps,busstop])
 
+solid_model_3D = T([2,3])([65,15])(solid_model_3D)
+
+#hill
+ptshill = [[0,0,0],[0,100,0],[100,100,0],[100,0,0],
+		   [25,25,15],[25,75,15],[75,75,15],[75,25,15]]
+
+hill0 = JOIN(AA(MK)(ptshill))
+hill0 = COLOR(OCRA0)(T([1,2])([-25,40])(hill0))
+
+#background
+bkg = [[0,0],[0,150],[110,150],[110,0]]
+bkg1 = JOIN(AA(MK)(bkg))
+bkg3d = COLOR(OCRA0)(PROD([bkg1, Q(1)]))
+bkg3d = T(1)(-30)(bkg3d)
+
+#path to the awesome temple
+smallpath = COLOR(GREY2)(T([1,2,3])([20,0,1])(CUBOID([4,42,0.01])))
+
+#stairs to the awesome temple
+stairs1 = STRUCT([T([2])([1*i])(CUBOID([4,1,i*0.6]))for i in range(1,25)])
+stairs1 = COLOR(GREY2)(T([1,2,3])([20,40,1])(stairs1))
+
+pathbkg = STRUCT([hill0,bkg3d,smallpath,stairs1])
+
+#hill details: trees
+BROWN1 = rgb([110, 65, 0])
+GREEN1 = rgb([0, 150, 0])
+trunk = COLOR(BROWN1)(T(3)(1)(CYLINDER([1,5])(10)))
+foliage0 = T(3)(5)(CONE([6,10])(20))
+foliage1 = T(3)(11)(CONE([4,10])(20))
+foliage2 = T(3)(17)(CONE([2.7,10])(20))
+foliage = COLOR(GREEN1)(STRUCT([foliage0,foliage1,foliage2]))
+
+#tree
+tree = STRUCT([trunk,foliage])
+tree1 = T([1,2])([0,10])(tree)
+tree2 = T([1,2])([4,32])(tree)
+tree3 = T([1,2])([-15,25])(tree)
+trees = STRUCT([tree1,tree2,tree3])
+
+#what about a kiosk?
+kroof = T(3)(10)(CONE([10,5])(20))
+#trunk = COLOR(BROWN1)(T(3)(1)(CYLINDER([1,5])(10)))
+
+total = STRUCT([solid_model_3D,details,pathbkg,trees,kroof])
+VIEW(total)
+#VIEW(SKELETON(1)(total))
 
