@@ -3,7 +3,7 @@ from larcc import *
 from myfont import *
 from random import random
 
-#Homework 1 - exercise3
+#Homework 1 - exercise4
 #Author: Davide Violante
 
 #function for custom colors with 0:255 numbers
@@ -322,7 +322,15 @@ pathbords = COLOR(GREY3)(STRUCT([pathbord1,pathbord2]))
 stairs1 = STRUCT([T([2])([1*i])(CUBOID([4,1,i*0.6]))for i in range(1,25)])
 stairs1 = COLOR(GREY2)(T([1,2,3])([20,40,1])(stairs1))
 
-pathbkg = STRUCT([hill0,bkg3d,smallpath,stairs1,pathbords])
+ptsstairs = [[0,0,0],[0,25,0],[0,25,15],
+			 [-0.3,0,0],[-0.3,25,0],[-0.3,25,15]]
+stairborders1 = JOIN(AA(MK)(ptsstairs))
+stairborders1 = T([1,2,3])([20,40,1])(stairborders1)
+stairborders2 = T(1)(4.3)(stairborders1)
+
+stairborders = COLOR(GREY3)(STRUCT([stairborders1,stairborders2]))
+
+pathbkg = STRUCT([hill0,bkg3d,smallpath,stairs1,pathbords,stairborders])
 
 #hill details: trees
 BROWN1 = rgb([110, 65, 0])
