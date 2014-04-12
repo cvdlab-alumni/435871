@@ -1,7 +1,6 @@
 from pyplasm import *
 from larcc import *
 from myfont import *
-from random import random
 
 #Homework 1 - exercise4
 #Author: Davide Violante
@@ -359,7 +358,13 @@ kiosk = STRUCT([kroof,ksupports,kchairs])
 
 kiosk = T([1,2])([50,20])(kiosk)
 
-total = STRUCT([solid_model_3D,details,pathbkg,trees,kiosk])
+#big text signature: name of model and name of author
+text = PROD([OFFSET([0.5,0.25])(TEXT("Temple_of_Concordia")),Q(2)])
+text = T([1,2])([-20,150])(text)
+text2 = PROD([OFFSET([0.5,0.25])(TEXT("Davide_V.")),Q(2)])
+text2 = T([1,2])([-30,100])(R([1,2])(PI/2)(text2))
+
+total = STRUCT([solid_model_3D,details,pathbkg,trees,kiosk,text,text2])
 VIEW(total)
 #VIEW(SKELETON(1)(total))
 
