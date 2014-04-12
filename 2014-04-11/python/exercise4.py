@@ -242,6 +242,8 @@ GREY1 = rgb([155, 155, 155])
 GREY2 = rgb([120, 120, 120])
 BLUE1 = rgb([0, 40, 160])
 LIGHTBLUE = rgb([180, 255, 255])
+BEIGE = rgb([255, 255, 200])
+GREY3 = rgb([222, 222, 222])
 
 #sidewalk
 sidewalk1 = CUBOID([110,-3,1])
@@ -286,7 +288,12 @@ b8 = T([1,2])([64,-18])(CUBOID([16,BD,22]))
 
 buildings = COLOR(BLUE1)(STRUCT([b1,b2,b3,b4,b5,b6,b7,b8,b5a]))
 
-details = STRUCT([sidewalks,road,buildings,lamps,busstop])
+#road borders
+roadbord1 = T([1,2,3])([24,0,1])(CUBOID([56,0.3,1.5]))
+roadbord2 = T([1,2,3])([-30,0,1])(CUBOID([50,0.3,1.5]))
+roadbords = COLOR(GREY2)(STRUCT([roadbord1,roadbord2]))
+
+details = STRUCT([sidewalks,road,buildings,lamps,busstop,roadbords])
 
 solid_model_3D = T([2,3])([65,15])(solid_model_3D)
 
@@ -306,11 +313,16 @@ bkg3d = T(1)(-30)(bkg3d)
 #path to the awesome temple
 smallpath = COLOR(GREY2)(T([1,2,3])([20,0,1])(CUBOID([4,42,0.01])))
 
+#border for path
+pathbord1 = T([1,2,3])([24,0.3,1])(CUBOID([0.3,42,0.3]))
+pathbord2 = T(1)(-4.3)(pathbord1)
+pathbords = COLOR(GREY3)(STRUCT([pathbord1,pathbord2]))
+
 #stairs to the awesome temple
 stairs1 = STRUCT([T([2])([1*i])(CUBOID([4,1,i*0.6]))for i in range(1,25)])
 stairs1 = COLOR(GREY2)(T([1,2,3])([20,40,1])(stairs1))
 
-pathbkg = STRUCT([hill0,bkg3d,smallpath,stairs1])
+pathbkg = STRUCT([hill0,bkg3d,smallpath,stairs1,pathbords])
 
 #hill details: trees
 BROWN1 = rgb([110, 65, 0])
@@ -329,10 +341,17 @@ tree3 = T([1,2])([-15,25])(tree)
 trees = STRUCT([tree1,tree2,tree3])
 
 #what about a kiosk?
-kroof = T(3)(10)(CONE([10,5])(20))
-#trunk = COLOR(BROWN1)(T(3)(1)(CYLINDER([1,5])(10)))
+kroof = COLOR(BEIGE)(T(3)(10)(CONE([10,5])(20)))
+ksupport = T([1,2,3])([0,9,1])(CYLINDER([0.2,9])(10))
+ksupports = COLOR(GREY3)(STRUCT(NN(8)([ksupport,R([1,2])(PI/4)])))
+kchair = T([1,2,3])([0,5,1])(CUBOID([2,2,1]))
+kchairs = COLOR(GREY3)(STRUCT(NN(5)([kchair,R([1,2])(PI/2.5)])))
 
-total = STRUCT([solid_model_3D,details,pathbkg,trees,kroof])
+kiosk = STRUCT([kroof,ksupports,kchairs])
+
+kiosk = T([1,2])([50,20])(kiosk)
+
+total = STRUCT([solid_model_3D,details,pathbkg,trees,kiosk])
 VIEW(total)
 #VIEW(SKELETON(1)(total))
 
