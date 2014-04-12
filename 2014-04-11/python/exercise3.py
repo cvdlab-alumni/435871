@@ -1,6 +1,7 @@
 from pyplasm import *
 from larcc import *
 from myfont import *
+from random import random
 
 #Homework 1 - exercise3
 #Author: Davide Violante
@@ -226,13 +227,47 @@ south = T([1])([36])(north)
 #north and south together
 vertical = STRUCT([north,south,topsides])
 
-#------> RIAGGIUNGERE floor0_3d
-two_and_half_model = STRUCT([floor1_3d,floor2_3d,floor3_3d,floor4_3d])
+two_and_half_model = STRUCT([floor0_3d,floor1_3d,floor2_3d,floor3_3d,floor4_3d])
 solid_model_3D = STRUCT([two_and_half_model,vertical])
 
 #final view
-VIEW(solid_model_3D)
+#VIEW(solid_model_3D)
 #VIEW(SKELETON(1)(solid_model_3D))
 
+#HW2: NEIGHBOURHOOD
+
+BLACK1 = rgb([40, 40, 40])
+BLACK2 = rgb([60, 60, 60])
+BLUE1 = rgb([0, 40, 160])
+
+#sidewalk
+sidewalk1 = CUBOID([110,-3,1])
+sidewalk1 = T([1,2])([-30,0])(sidewalk1)
+sidewalk2 = T([2])([-12-3])(sidewalk1)
+sidewalks = COLOR(BLACK2)(STRUCT([sidewalk1,sidewalk2]))
+
+#road
+road = CUBOID([110,-12,0.6])
+road = COLOR(BLACK1)(T([1,2])([-30,-3])(road))
+
+#definings sizes
+BD = -10
+BH = 50
+
+#buildings with random heights!
+b1 = T([1,2])([-30,-18])(CUBOID([10,BD,BH*random()]))
+b2 = T([1,2])([-17,-18])(CUBOID([8,BD,BH*random()]))
+b3 = T([1,2])([-6,-18])(CUBOID([11,BD,BH*random()]))
+b4 = T([1,2])([8,-18])(CUBOID([6,BD,BH*random()]))
+b5 = T([1,2])([17,-18])(CUBOID([20,BD,30]))
+b5a = T([1,2,3])([19.5,-19,30])((CUBOID([15,BD+2,20])))
+b6 = T([1,2])([40,-18])(CUBOID([5,BD,BH*random()]))
+b7 = T([1,2])([48,-18])(CUBOID([13,BD,BH*random()]))
+b8 = T([1,2])([64,-18])(CUBOID([16,BD,BH*random()]))
+
+buildings = COLOR(BLUE1)(STRUCT([b1,b2,b3,b4,b5,b6,b7,b8,b5a]))
+
+total = STRUCT([solid_model_3D,sidewalks,road,buildings])
+VIEW(total)
 
 
