@@ -289,11 +289,34 @@ elevs = STRUCT([elev1,elev2])
 #roof
 roof = CUBOID([13.6,23.5,0.5])
 roof = T([1,2,3])([4.2+we-0.05,-0.5,3.2*7])(roof)
+
 #transparent roof just to make the interiors visibles!
 roof = MATERIAL([1,1,1,0, 0,0,0,0.4, 0,0,0,0, 0,0,0,0, 100])(roof)
 
-VIEW(STRUCT([fills,wris,entris2,entris3,elevs,roof]))
+#ground floor
+groundbig = CUBOID([37,38.5,0.2])
+groundbig = T([1,2,3])([-10,-8,-0.2])(groundbig)
 
-#VIEW(hpcB)
-#VIEW(STRUCT(building))
-#DRAW(building)
+dom = INTERVALS(1)(32)
+gr1 = BEZIER(S1)([[0,0],[0,10],[10,10],[10,8]])
+gr2 = BEZIER(S1)([[0,0],[2,0],[2,8],[10,8]])
+gr1 = MAP(gr1)(dom)
+gr2 = MAP(gr2)(dom)
+ground = SOLIDIFY(STRUCT([gr1,gr2]))
+ground = PROD([ground,Q(0.7)])
+ground = T([1,2,3])([-10,-8,0])(ground)
+
+ground2 = R([3,1])(PI)(ground)
+ground2 = T([1,2,3])([17,0,0.7])(ground2)
+groundf = STRUCT([ground,ground2])
+
+groundr = R([1,2])(PI)(groundf)
+groundr = T([1,2])([17,22.5])(groundr)
+
+OCRA = rgb([255, 243, 190])
+grounds = COLOR(OCRA)(STRUCT([groundf,groundr,groundbig]))
+
+OCRA2 = rgb([255, 220, 150])
+colorato = COLOR(OCRA2)(STRUCT([fills,wris,entris2,entris3,elevs,roof]))
+
+VIEW(STRUCT([colorato,grounds]))
