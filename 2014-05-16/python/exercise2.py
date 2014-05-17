@@ -291,7 +291,8 @@ roof = CUBOID([13.6,23.5,0.5])
 roof = T([1,2,3])([4.2+we-0.05,-0.5,3.2*7])(roof)
 
 #transparent roof just to make the interiors visibles!
-roof = MATERIAL([1,1,1,0, 0,0,0,0.4, 0,0,0,0, 0,0,0,0, 100])(roof)
+#remove this line to add the roof
+roof = MATERIAL([1,1,1,0, 0,0,0,0.2, 0,0,0,0, 0,0,0,0, 100])(roof)
 
 #ground floor
 groundbig = CUBOID([37,38.5,0.2])
