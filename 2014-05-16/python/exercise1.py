@@ -27,7 +27,7 @@ wi = 0.15
 #master form
 m_shape = [5,7,2]
 m_pattern = [[we,5,we,(3.5+wi+4+wi+4+we),we],
-			[we,3.5,wi,2,wi,4.5,we],
+			[0.15,3.5,wi,2,wi,4.5,we],
 			[0.2,3]]
 			#0.2,3,0.4 roof
 
@@ -184,5 +184,14 @@ master = diagram2cell(w56,master,24)
 hpc = cn(master)
 #VIEW(hpc)
 master = rem([131,137,143,152,158,164],master)
+#DRAW(master)
+
+hole_shape = [2,1,1]
+hole_pattern = [[4,4],[1],[1]]
+hole = assemblyDiagramInit(hole_shape)(hole_pattern)
+master = diagram2cell(hole,master,48)
+hpc = cn(master)
+#VIEW(hpc)
+master = rem([166],master)
 DRAW(master)
 
