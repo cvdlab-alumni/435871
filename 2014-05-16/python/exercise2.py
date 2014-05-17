@@ -8,12 +8,16 @@ DRAW = COMP([VIEW,STRUCT,MKPOLS])
 #cn = cellNumbering
 def cn(master):
 	hpc = SKEL_1(STRUCT(MKPOLS(master)))
-	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,0.6)
+	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,1)
 	return hpc
 
 #rem = remove: remove walls
 def rem(toRemove,master):
 	return (master[0], [cell for k,cell in enumerate(master[1]) if not (k in toRemove)])
+
+#function for custom colors with 0:255 numbers
+def rgb(c):
+	return [c[0]/255.0, c[1]/255.0, c[2]/255.0]
 
 #home measurements
 #wall external width
@@ -222,9 +226,16 @@ building = diagram2cell(masterR,building,1)
 building = diagram2cell(masterR,building,0)
 hpcB = cn(building)
 
-c = CUBOID([4-0.12,0.35,0.2])
-c = T([1,2,3])([5+we+wi,7+we+4-wi-0.02,3.2*6])(c)
-cs = STRUCT(NN(7)([c,T(3)(-3.2)]))
+#testing colors
+# building = MKPOLS(building)
+# building[8] = COLOR(Color4f([(1),(0),(0)]))(building[8])
+# structBuilding = STRUCT(building)
+
+structBuilding = STRUCT(MKPOLS(building))
+
+fill = CUBOID([4-0.12,0.35,0.2])
+fill = T([1,2,3])([5+we+wi,7+we+4-wi-0.02,3.2*6])(fill)
+fills = STRUCT(NN(7)([fill,T(3)(-3.2)]))
 
 #additional walls
 muroint = CUBOID([we,7.7,3.2*7])
@@ -256,7 +267,33 @@ wwnn2 = T([2])([15])(wwnn)
 wwnntot = STRUCT([wwnn,wwnn2])
 wwris = DIFFERENCE([muriext,wwnntot])
 
-structBuilding = STRUCT(MKPOLS(building))
-VIEW(STRUCT([structBuilding,cs,wris,wwris]))
+#entrances
+ent = CUBOID([1.5,0.5,2.2])
+ent = T([1,2])([2,-0.2])(ent)
+ent2 = T([2])([22.4])(ent)
+enttot = STRUCT([ent,ent2])
+entris2 = DIFFERENCE([structBuilding,enttot])
+entris3 = DIFFERENCE([wwris,enttot])
+
+#elevator
+elev = CUBOID([1.5,1.5,2.2])
+elev = T([1,2,3])([9.7,7.6,0.2])(elev)
+wire1 = CUBOID([0.05,0.05,20])
+wire1 = T([1,2,3])([10.3,8.2,2.4])(wire1)
+wire2 = T([2])([0.2])(wire1)
+wires = STRUCT([wire1,wire2])
+elev1 = STRUCT([wires,elev])
+elev2 = T([2])([5.8])(elev1)
+elevs = STRUCT([elev1,elev2])
+
+#roof
+roof = CUBOID([13.6,23.5,0.5])
+roof = T([1,2,3])([4.2+we-0.05,-0.5,3.2*7])(roof)
+#transparent roof just to make the interiors visibles!
+roof = MATERIAL([1,1,1,0, 0,0,0,0.4, 0,0,0,0, 0,0,0,0, 100])(roof)
+
+VIEW(STRUCT([fills,wris,entris2,entris3,elevs,roof]))
+
 #VIEW(hpcB)
+#VIEW(STRUCT(building))
 #DRAW(building)
