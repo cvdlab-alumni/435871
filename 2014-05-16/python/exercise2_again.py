@@ -8,7 +8,7 @@ DRAW = COMP([VIEW,STRUCT,MKPOLS])
 #cn = cellNumbering
 def cn(master):
 	hpc = SKEL_1(STRUCT(MKPOLS(master)))
-	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,2)
+	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,1)
 	return hpc
 
 #rem = remove: remove walls
@@ -38,10 +38,8 @@ m_pattern = [[we,5,we,(3.5+wi+4+wi+4+we),we],
 
 master = assemblyDiagramInit(m_shape)(m_pattern)
 V,CV = master
-hpc = cn(master)
-#VIEW(hpc)
 
-#ROOMS
+# ----- ROOMS ----- #
 #3 rooms: lounge, myroom, bedroom
 r3_shape = [5,1,1]
 r3_pattern = [[3.5,wi,4,wi,4],[1],[1]]
@@ -49,8 +47,6 @@ r3 = assemblyDiagramInit(r3_shape)(r3_pattern)
 
 master = diagram2cell(r3,master,53)
 master = diagram2cell(r3,master,52)
-hpc = cn(master)
-#VIEW(hpc)
 
 #bathroom
 bath_shape = [3,1,1]
@@ -59,8 +55,6 @@ bathroom = assemblyDiagramInit(bath_shape)(bath_pattern)
 
 master = diagram2cell(bathroom,master,48)
 master = diagram2cell(bathroom,master,48)
-hpc = cn(master)
-#VIEW(hpc)
 
 #kitchen
 kit_shape = [5,1,1]
@@ -73,69 +67,134 @@ master = diagram2cell(kitchen,master,43)
 master = diagram2cell(kitchen,master,42)
 
 #removing cells to make the rooms
-toRemove = [0,1,2,3,14,15,16,17,21,23,25,62,64,66,75,77,80,83,85,87,90,95]
+toRemove = [0,1,2,3,14,15,16,17,21,23,25,62,64,66,75,77,80,83,85,87,88,90,95]
 master = rem(toRemove,master)
-hpc = cn(master)
+#hpc = cn(master)
 #VIEW(hpc)
 #DRAW(master)
 
-#DOORS
+# ----- DOORS ----- #
 #main door and kitchen
 d12_shape = [5,1,2]
-d12_pattern = [[2,1.5,5.6,0.8,1.1+wi+2],[1],[2,0.8]]
+d12_pattern = [[2.3,1.5,5.3,0.8,1.1+wi+2],[1],[2,0.8]]
 d12 = assemblyDiagramInit(d12_shape)(d12_pattern)
 master = diagram2cell(d12,master,32)
-hpc = cn(master)
-#VIEW(hpc)
 
 #doors: lounge, myroom, bedroom
 d345_shape = [7,1,2]
 d345_pattern = [[1.9,0.8,0.8+wi+2,0.8,1.2+wi+0.2,0.8,3],[1],[2,0.8]]
 d345 = assemblyDiagramInit(d345_shape)(d345_pattern)
 master = diagram2cell(d345,master,33)
-hpc = cn(master)
-#VIEW(hpc)
 
 #doors: bathroom
 d6_shape = [1,3,2]
 d6_pattern = [[1],[0.6,0.8,0.6],[2,0.8]]
 d6 = assemblyDiagramInit(d6_shape)(d6_pattern)
 master = diagram2cell(d6,master,59)
-hpc = cn(master)
-#VIEW(hpc)
 
 #doors: loft
 d7_shape = [1,3,3]
-d7_pattern = [[1],[0.6,0.8,0.6],[0.2,2,0.6]]
+d7_pattern = [[1],[0.6,0.8,0.6],[0.2,1.8,0.8]]
 d7 = assemblyDiagramInit(d7_shape)(d7_pattern)
 master = diagram2cell(d7,master,24)
+
+#doors: elevator
+d8_shape = [1,3,2]
+d8_pattern = [[1],[2,1,0.5],[1.8,1]]
+d8 = assemblyDiagramInit(d8_shape)(d8_pattern)
+master = diagram2cell(d8,master,62)
+
+#stairs hole
+sh_shape = [2,1,1]
+sh_pattern = [[2,2.5],[1],[1]]
+sh = assemblyDiagramInit(sh_shape)(sh_pattern)
+master = diagram2cell(sh,master,58)
+master = diagram2cell(sh,master,65)
+
+#removing doors to make entrable rooms
+master = rem([70,74,80,84,88,94,102,109,113,115],master)
+#hpc = cn(master)
+#VIEW(hpc)
+#DRAW(master)
+
+# ----- WINDOWS ----- #
+#heights
+wh = [0.8,1.2,1]
+#kitchen window
+w1_shape = [1,5,3]
+w1_pattern = [[1],[0.9,0.6,0.1,0.6,1.3],[1.2,0.8,1]]
+w1 = assemblyDiagramInit(w1_shape)(w1_pattern)
+master = diagram2cell(w1,master,61)
+
+#kitchen window 2
+w2_shape = [1,3,3]
+w2_pattern = [[1],[0.4,0.8,2.3],wh]
+w2 = assemblyDiagramInit(w2_shape)(w2_pattern)
+master = diagram2cell(w2,master,37)
+
+#bathroom window
+w3_shape = [1,3,3]
+w3_pattern = [[1],[0.6,0.8,0.6],wh]
+w3 = assemblyDiagramInit(w3_shape)(w3_pattern)
+master = diagram2cell(w3,master,40)
+
+#bedroom window
+#pattern 3 windows
+wdiv3 = [1.2,0.6,0.1,0.6,0.1,0.6,1.3]
+w4_shape = [1,7,3]
+w4_pattern = [[1],wdiv3,wh]
+w4 = assemblyDiagramInit(w4_shape)(w4_pattern)
+master = diagram2cell(w4,master,43)
+
+#lounge and myroom windows
+w56_shape = [15,1,3]
+w56_pattern = [[0.8,0.6,0.1,0.5,0.1,0.6,0.8,wi+1.1,0.6,0.1,0.5,0.1,0.6,1+wi,4+we],[1],wh]
+w56 = assemblyDiagramInit(w56_shape)(w56_pattern)
+master = diagram2cell(w56,master,33)
+
+# ----- TOP FLOOR -----
+#saving the master of current state to make a different one for top floor
+mastertop = master
+mastertop = rem([106,112, 121, 130, 139,145,151, 160,166,172, 181,187,193],mastertop)
+
+#building the loft for 7th floor
+loft_shape = [1,1,2]
+loft_pattern = [[1],[1],[0.7,2.3]]
+loft = assemblyDiagramInit(loft_shape)(loft_pattern)
+
+loft2split = [1,2,3,4,5,11]
+for i in range(len(loft2split)):
+	mastertop = diagram2cell(loft,mastertop,loft2split[i])
+
+mastertop = rem([183,185,187,189,191,193,195],mastertop)
+#DRAW(mastertop)
+# ----- END TOP FLOOR ----- #
+
+#additional room window
+w7_shape = [7,1,3]
+w7_pattern = [wdiv3,[1],wh]
+w7 = assemblyDiagramInit(w7_shape)(w7_pattern)
+master = diagram2cell(w7,master,16)
+master = diagram2cell(w3,master,3)
+
+#removing windows to leave the holes (kitchen, kitchen2, bathroom, bedroom, myroom, lounge, addroom)
+master = rem([104,110, 119, 128, 137,143,149, 158,164,170, 179,185,191, 203,209,215,224],master)
 hpc = cn(master)
 VIEW(hpc)
+DRAW(master)
 
-exit()
+# # ----- COLORS ----- #
+# master = MKPOLS(master)
+# c_LOFT = rgb([255,0,0])
 
-#last floor with loft
-mastertop = master
-hpctop = cn(mastertop)
-#VIEW(hpctop)
-#DRAW(mastertop)
+# master[11] = COLOR(c_LOFT)(master[11])
+# master[12] = COLOR(c_LOFT)(master[12])
+# master[13] = COLOR(c_LOFT)(master[13])
 
-# #loft of the top apartment
-# loft_shape = [1,1,2]
-# loft_pattern = [[1],[1],[0.6,2.4]]
-# loft = assemblyDiagramInit(loft_shape)(loft_pattern)
+# VIEW(STRUCT(master))
+# #end colors
 
-# loft2split = [11,1,2,3,4,5,10]
-# for i in range(len(loft2split)):
-# 	mastertop = diagram2cell(loft,mastertop,loft2split[i])
-
-# mastertop = rem([70,72,74,76,78,80,82],mastertop)
-
-# hpctop = cn(mastertop)
-# VIEW(hpctop)
-# DRAW(mastertop)
-# #end loft
-
+# ---------- EXERCISE 2 BEGINS HERE ---------- #
 
 #whole building structure
 total_shape = [1,2,8]
@@ -148,44 +207,31 @@ total = diagram2cell(master,total,9)
 total = diagram2cell(master,total,9)
 total = diagram2cell(master,total,9)
 total = diagram2cell(master,total,9)
+total = diagram2cell(mastertop,total,9)
 
 #specular apartment
 masterS = larApply(s(1,-1,1))(master)
+masterStop = larApply(s(1,-1,1))(mastertop)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
+total = diagram2cell(masterStop,total,1)
 
 hpc = cn(total)
 #VIEW(hpc)
 #DRAW(total)
+exit()
 
-
-
+#--------------------------------------
 #removing some parts 
 master = rem([0,1,2,3,14,15,16,17,75,77,74,72,71,69,67,25,23,21],master)
 #DRAW(master)
 
 hpc = cn(master)
 #VIEW(hpc)
-
-# #loft, dividing the walls
-# loft_shape = [1,1,2]
-# loft_pattern = [[1],[1],[0.6,2.4]]
-# loft = assemblyDiagramInit(loft_shape)(loft_pattern)
-
-# toSplit = [11,1,2,3,4,5,10]
-# for i in range(len(toSplit)):
-# 	master = diagram2cell(loft,master,toSplit[i])
-
-# hpc = cn(master)
-# #VIEW(hpc)
-
-# #loft, removing the walls
-# master = rem([54,56,58,60,62,64,66],master)
-# #DRAW(master)
 
 #removing some other parts
 out1_shape = [3,1,1]
@@ -201,89 +247,89 @@ master = rem([10,11,12,13,60,57],master)
 hpc = cn(master)
 #VIEW(hpc)
 
-#DOORS
-d12_shape = [5,1,2]
-d12_pattern = [[2,1.5,5.5,0.6,1.4+wi+2],[1],[2,0.8]]
-d12 = assemblyDiagramInit(d12_shape)(d12_pattern)
-master = diagram2cell(d12,master,21)
-hpc = cn(master)
-#VIEW(hpc)
-#removing the doors to make the doors
-master = rem([61,65],master)
-#DRAW(master)
+# #DOORS
+# d12_shape = [5,1,2]
+# d12_pattern = [[2,1.5,5.5,0.6,1.4+wi+2],[1],[2,0.8]]
+# d12 = assemblyDiagramInit(d12_shape)(d12_pattern)
+# master = diagram2cell(d12,master,21)
+# hpc = cn(master)
+# #VIEW(hpc)
+# #removing the doors to make the doors
+# master = rem([61,65],master)
+# #DRAW(master)
 
-d345_shape = [7,1,2]
-d345_pattern = [[2,0.7,0.8+wi+2,0.7,1.3+wi+0.15,0.7,3.15],[1],[2,0.8]]
-d345 = assemblyDiagramInit(d345_shape)(d345_pattern)
-master = diagram2cell(d345,master,23)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([68,72,76],master)
-#DRAW(master)
+# d345_shape = [7,1,2]
+# d345_pattern = [[2,0.7,0.8+wi+2,0.7,1.3+wi+0.15,0.7,3.15],[1],[2,0.8]]
+# d345 = assemblyDiagramInit(d345_shape)(d345_pattern)
+# master = diagram2cell(d345,master,23)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([68,72,76],master)
+# #DRAW(master)
 
-d6_shape = [1,3,2]
-d6_pattern = [[1],[0.5,0.6,0.9],[2,0.8]]
-d6 = assemblyDiagramInit(d6_shape)(d6_pattern)
-master = diagram2cell(d6,master,13)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([78],master)
-#DRAW(master)
+# d6_shape = [1,3,2]
+# d6_pattern = [[1],[0.5,0.6,0.9],[2,0.8]]
+# d6 = assemblyDiagramInit(d6_shape)(d6_pattern)
+# master = diagram2cell(d6,master,13)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([78],master)
+# #DRAW(master)
 
-d7_shape = [1,3,2]
-d7_pattern = [[1],[0.65,0.7,0.65],[2,0.8]]
-d7 = assemblyDiagramInit(d7_shape)(d7_pattern)
-master = diagram2cell(d7,master,41)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([82],master)
-#DRAW(master)
+# d7_shape = [1,3,2]
+# d7_pattern = [[1],[0.65,0.7,0.65],[2,0.8]]
+# d7 = assemblyDiagramInit(d7_shape)(d7_pattern)
+# master = diagram2cell(d7,master,41)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([82],master)
+# #DRAW(master)
 
-#WINDOWS
-w1_shape = [1,5,3]
-w1_pattern = [[1],[0.9,0.6,0.1,0.6,1.3],[1.2,0.8,1]]
-w1 = assemblyDiagramInit(w1_shape)(w1_pattern)
-master = diagram2cell(w1,master,41)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([88,94],master)
-#DRAW(master)
+# #WINDOWS
+# w1_shape = [1,5,3]
+# w1_pattern = [[1],[0.9,0.6,0.1,0.6,1.3],[1.2,0.8,1]]
+# w1 = assemblyDiagramInit(w1_shape)(w1_pattern)
+# master = diagram2cell(w1,master,41)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([88,94],master)
+# #DRAW(master)
 
-w2_shape = [1,3,3]
-w2_pattern = [[1],[0.9,0.6,2],[1.2,0.8,1]]
-w2 = assemblyDiagramInit(w2_shape)(w2_pattern)
-master = diagram2cell(w2,master,28)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([100],master)
-#DRAW(master)
+# w2_shape = [1,3,3]
+# w2_pattern = [[1],[0.9,0.6,2],[1.2,0.8,1]]
+# w2 = assemblyDiagramInit(w2_shape)(w2_pattern)
+# master = diagram2cell(w2,master,28)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([100],master)
+# #DRAW(master)
 
-w3_shape = [1,3,3]
-w3_pattern = [[1],[0.5,1,0.5],[1.2,0.8,1]]
-w3 = assemblyDiagramInit(w3_shape)(w3_pattern)
-master = diagram2cell(w3,master,31)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([107],master)
-#DRAW(master)
+# w3_shape = [1,3,3]
+# w3_pattern = [[1],[0.5,1,0.5],[1.2,0.8,1]]
+# w3 = assemblyDiagramInit(w3_shape)(w3_pattern)
+# master = diagram2cell(w3,master,31)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([107],master)
+# #DRAW(master)
 
-w4_shape = [1,7,3]
-w4_pattern = [[1],[1.2,0.6,0.1,0.6,0.1,0.6,1.3],[1,1,1]]
-w4 = assemblyDiagramInit(w4_shape)(w4_pattern)
-master = diagram2cell(w4,master,34)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([114,120,126],master)
-#DRAW(master)
+# w4_shape = [1,7,3]
+# w4_pattern = [[1],[1.2,0.6,0.1,0.6,0.1,0.6,1.3],[1,1,1]]
+# w4 = assemblyDiagramInit(w4_shape)(w4_pattern)
+# master = diagram2cell(w4,master,34)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([114,120,126],master)
+# #DRAW(master)
 
-w56_shape = [15,1,3]
-w56_pattern = [[0.8,0.6,0.1,0.5,0.1,0.6,0.8,wi+1.1,0.6,0.1,0.5,0.1,0.6,1+wi,4+we],[1],[1,1,1]]
-w56 = assemblyDiagramInit(w56_shape)(w56_pattern)
-master = diagram2cell(w56,master,24)
-hpc = cn(master)
-#VIEW(hpc)
-master = rem([131,137,143,152,158,164],master)
-#DRAW(master)
+# w56_shape = [15,1,3]
+# w56_pattern = [[0.8,0.6,0.1,0.5,0.1,0.6,0.8,wi+1.1,0.6,0.1,0.5,0.1,0.6,1+wi,4+we],[1],[1,1,1]]
+# w56 = assemblyDiagramInit(w56_shape)(w56_pattern)
+# master = diagram2cell(w56,master,24)
+# hpc = cn(master)
+# #VIEW(hpc)
+# master = rem([131,137,143,152,158,164],master)
+# #DRAW(master)
 
 hole_shape = [2,1,1]
 hole_pattern = [[4,4],[1],[1]]
