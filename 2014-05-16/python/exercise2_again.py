@@ -179,20 +179,9 @@ master = diagram2cell(w3,master,3)
 
 #removing windows to leave the holes (kitchen, kitchen2, bathroom, bedroom, myroom, lounge, addroom)
 master = rem([104,110, 119, 128, 137,143,149, 158,164,170, 179,185,191, 203,209,215,224],master)
-hpc = cn(master)
-VIEW(hpc)
-DRAW(master)
-
-# # ----- COLORS ----- #
-# master = MKPOLS(master)
-# c_LOFT = rgb([255,0,0])
-
-# master[11] = COLOR(c_LOFT)(master[11])
-# master[12] = COLOR(c_LOFT)(master[12])
-# master[13] = COLOR(c_LOFT)(master[13])
-
-# VIEW(STRUCT(master))
-# #end colors
+#hpc = cn(master)
+#VIEW(hpc)
+#DRAW(master)
 
 # ---------- EXERCISE 2 BEGINS HERE ---------- #
 
@@ -223,6 +212,21 @@ total = diagram2cell(masterStop,total,1)
 hpc = cn(total)
 #VIEW(hpc)
 #DRAW(total)
+
+# ----- STAIRS ----- #
+s1 = 0.5
+s2 = 0.232
+step2D = MKPOL([[[0,0],[0,s1],[s1,s2],[s1,s1]],[[1,2,3,4]],None])
+step3D = MAP([S1,S3,S2])(PROD([step2D,Q(2)]))
+stair = STRUCT(NN(15)([step3D,T([1,3])([s1,s2])]))
+stair = R([1,2])(PI/2)(stair)
+stair = T([1,2,3])([we+5+we+2,we+4.5+wi+2+we,3.2*6+0.05])(stair)
+stairs = STRUCT(NN(6)([stair,T(3)(-3.2-0.05)]))
+
+
+totalview = STRUCT(MKPOLS(total))
+VIEW(STRUCT([stairs, totalview]))
+
 exit()
 
 #--------------------------------------

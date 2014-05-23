@@ -179,17 +179,39 @@ master = diagram2cell(w3,master,3)
 
 #removing windows to leave the holes (kitchen, kitchen2, bathroom, bedroom, myroom, lounge, addroom)
 master = rem([104,110, 119, 128, 137,143,149, 158,164,170, 179,185,191, 203,209,215,224],master)
-hpc = cn(master)
-VIEW(hpc)
-DRAW(master)
 
-# # ----- COLORS ----- #
-# master = MKPOLS(master)
-# c_LOFT = rgb([255,0,0])
+hpc = cn(mastertop)
+#VIEW(hpc)
+#DRAW(mastertop)
 
-# master[11] = COLOR(c_LOFT)(master[11])
-# master[12] = COLOR(c_LOFT)(master[12])
-# master[13] = COLOR(c_LOFT)(master[13])
+# ----- COLORS ----- #
+mastertop = MKPOLS(mastertop)
 
-# VIEW(STRUCT(master))
-# #end colors
+#loft
+C_LOFT = rgb([255,200,153])
+listLoft = [5,6,0,1,2,3,4,10,182,183,184,185,186,187]
+for i in range(len(listLoft)):
+	mastertop[listLoft[i]] = COLOR(C_LOFT)(mastertop[listLoft[i]])
+
+#lounge
+c_LON = rgb([255,230,153])
+mastertop[40] = COLOR(c_LON)(mastertop[40])
+#myroom
+c_MY = rgb([217,255,204])
+mastertop[42] = COLOR(c_MY)(mastertop[42])
+#bedroom
+c_BED = rgb([255,218,204])
+mastertop[44] = COLOR(c_BED)(mastertop[44])
+#bath
+c_BATH = rgb([194,255,241])
+mastertop[47] = COLOR(c_BATH)(mastertop[47])
+#kitchen
+c_BATH = rgb([255,255,179])
+mastertop[50] = COLOR(c_BATH)(mastertop[50])
+#bath
+c_BATH = rgb([222,222,222])
+mastertop[45] = COLOR(c_BATH)(mastertop[45])
+
+#end colors
+
+VIEW(STRUCT(mastertop))
