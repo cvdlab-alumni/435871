@@ -26,7 +26,16 @@ we = 0.25
 wi = 0.15
 
 #total width, length and height of the apartment in meters
+#L=loft, K=kitchen, LO=lounge, M=myroom, P=parentsroom, WC=bathroom
+Lx = 5; Ly = 4.5+2
+LOx = 3.5; LOy = 4.5
+Mx = Px = 4; My = Py = 4.5
+Ky = 3.5
+WCy = 2
+
+#		  L     LO    M    P
 totX = we+5+we+3.5+wi+4+wi+4+we+we
+#		  K      WC   P
 totY = we+3.5+we+2+wi+4.5+we
 totZ = we+3
 
@@ -213,6 +222,7 @@ hpc = cn(total)
 #VIEW(hpc)
 #DRAW(total)
 
+# ----- PYPLASM PART BEGINS HERE ----- #
 # ----- STAIRS ----- #
 s1 = 0.5
 s2 = 0.232
@@ -223,11 +233,137 @@ stair = R([1,2])(PI/2)(stair)
 stair = T([1,2,3])([we+5+we+2,we+4.5+wi+2+we,3.2*6+0.05])(stair)
 stairs = STRUCT(NN(6)([stair,T(3)(-3.2-0.05)]))
 
+# ----- ROOF ----- #
+roof1 = CUBOID([we+3.5+wi+4+wi+4+we+we,(we+4.5+wi+2+we+3.5+we)*2,0.8])
+roof1 = T([1,2,3])([we+5,0,3.25*8])(roof1)
+roof2 = CUBOID([we+3.5+wi+4+wi+4,(4.5+wi+2+we+3.5+we)*2,0.6])
+roof2 = T([1,2,3])([we+5+we,we,3.25*8+0.2])(roof2)
+roof = DIFFERENCE([roof1,roof2])
 
-totalview = STRUCT(MKPOLS(total))
-VIEW(STRUCT([stairs, totalview]))
+# ----- CORNICE ------ #
+cornice1 = CUBOID([we+3.5+wi+4+wi+4+we+we+1.2,(we+4.5+wi+2+we+3.5+we+0.6)*2,0.2])
+cornice1 = T([1,2,3])([we+5-0.6,-0.6,3.25*8])(cornice1)
+cornice = DIFFERENCE([cornice1,(roof1)])
+#maindoor fill
+mdfill = CUBOID([2,Ky+we,we])
+mdfill = T([1,2,3])([we+Lx+we,we+Ly+we+Ky+we+we,3.25])(mdfill)
+roof = STRUCT([cornice, roof, mdfill])
+
+# ----- BUILDING DOOR ----- #
+maindoor1 = CUBOID([0.5,1.5,2])
+maindoor1 = T([1,2,3])([we+Lx+we-0.25,we+Ly+we+Ky+Ky/2,3.25])(maindoor1)
+
+#hole in a single cell
+totalview = MKPOLS(total)
+totalview[20] = DIFFERENCE([totalview[20],maindoor1])
+
+# ----- BASE ----- #
+base = COLOR(RED)(CUBOID([totX+4,totY*2+4,0.1]))
+base = T([1,2,3])([-2,-2,3.25])(base)
+
+
+#function to make Bezier curve giving control points
+def makeBez(cp):
+	return MAP(BEZIER(S1)(cp))(INTERVALS(1)(32))
+
+def disk2D(p):
+	u,v = p
+	return [v*COS(u),v*SIN(u)]
+
+def semiDisk(pi,h,r,q):
+	return PROD([MAP(disk2D)(PROD([INTERVALS(pi)(q), INTERVALS(r)(3)])), Q(h)])
+
+# q = totY*3
+# street1 = makeBez([[0,0],[0,q+10],[-10,q],[q,q]])
+# street2 = makeBez([[1.5,0],[1.5,q-1.5]])
+# street3 = makeBez([[1.5,q-1.5],[q,q-1.5]])
+# street4 = makeBez([[0,0],[1.5,0]])
+# street5 = makeBez([[q,q],[q,q-1.5]])
+
+# street = STRUCT([street1,street2,street3,street4,street5])
+# street = PROD([SOLIDIFY(street), Q(0.1)])
+
+# ----- SIDEWALK ----- #
+sidewalk1 = CUBOID([2,totY*3,0.25])
+sidewalk1 = T([1,2,3])([-2,0,3.25])(sidewalk1)
+sidewalk2 = CUBOID([totX*3/2,2,0.25])
+sidewalk2 = T([1,2,3])([0,-2,3.25])(sidewalk2)
+cornerwalk = R([1,2])(PI)(semiDisk(PI/2,0.25,2,16))
+cornerwalk = T([3])([3.25])(cornerwalk)
+
+sidewalk3 = T([1])([-8])(sidewalk1)
+sidewalk4 = T([2])([-8])(sidewalk2)
+cornerwalk2 = R([1,2])(PI)(semiDisk(PI/2,0.25,10,16))
+cornerwalk2 = T([3])([3.25])(cornerwalk2)
+cornerwalk3 = R([1,2])(PI)(semiDisk(PI/2,0.25,8,16))
+cornerwalk3 = T([3])([3.25])(cornerwalk3)
+cornerA = DIFFERENCE([cornerwalk2,cornerwalk3])
+
+sidewalk = STRUCT([sidewalk1,sidewalk2,cornerwalk,sidewalk3,sidewalk4,cornerA])
+
+# ----- STREET ----- #
+street1 = CUBOID([10,totY*3,0.25])
+street1 = T([1,2,3])([-10,0,3])(street1)
+street2 = CUBOID([totX*3/2,10,0.25])
+street2 = T([1,2,3])([0,-10,3])(street2)
+cornerstreet = R([1,2])(PI)(semiDisk(PI/2,0.25,10,16))
+cornerstreet = T([3])([3])(cornerstreet)
+
+street = STRUCT([street1,street2,cornerstreet,sidewalk])
+
+# ----- RAMP ----- #
+ramp1 = CUBOID([2,4,3.5])
+ramp1 = T([1,2,3])([0,totY*2,0])(ramp1)
+
+ptsramp = [[0,0,0],[0,4,0],[0,4,-3.5],[7,4,-3.5],[7,4,-3.25],[7,0,-3.5],[7,0,-3.25],[0,0,-3.5]]
+ramp2 = JOIN(AA(MK)(ptsramp))
+ramp2 = T([1,2,3])([2,totY*2,3.5])(ramp2)
+ramp = STRUCT([ramp1,ramp2])
+ramp2 = R([1,2])(PI/2)(ramp)
+ramp2 = T(1)(totY*4)(ramp2)
+
+ramps = STRUCT([ramp,ramp2])
+
+# ----- GARAGE STREET ----- #
+gs1 = CUBOID([totX-9,4,0.25])
+gs1 = T([1,2,3])([9,totY*2,0])(gs1)
+
+gs2 = CUBOID([4,totY*2-9,0.25])
+gs2 = T([1,2,3])([totX,9,0])(gs2)
+
+gscorner = semiDisk(PI/2,0.25,4,1)
+gscorner = T([1,2])([totX,totY*2])(gscorner)
+
+gs = STRUCT([gs1,gs2,gscorner])
+
+# ----- GARAGE WALLS ----- #
+gw1 = CUBOID([totX,we,3.5])
+gw1 = T([1,2,3])([0,totY*2+4,0])(gw1)
+
+gw2 = CUBOID([we,totY*2,3.5])
+gw2 = T([1,2,3])([totX+4,0,0])(gw2)
+
+gwcornerR = semiDisk(PI/2,3.5,4,1)
+gwcornerR = T([1,2])([totX,totY*2])(gwcornerR)
+gwcorner2 = semiDisk(PI/2,3.5,4.25,1)
+gwcorner2 = T([1,2])([totX,totY*2])(gwcorner2)
+
+gwcorner = DIFFERENCE([gwcorner2,gwcornerR])
+
+gw = STRUCT([gw1,gw2,gwcorner])
+
+
+#totalview = STRUCT(MKPOLS(total))
+totalview = STRUCT(totalview)
+VIEW(STRUCT([totalview, stairs, roof, street, ramps, gs, gw]))
 
 exit()
+
+
+
+
+
+
 
 #--------------------------------------
 #removing some parts 
