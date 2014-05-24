@@ -194,6 +194,22 @@ master = rem([104,110, 119, 128, 137,143,149, 158,164,170, 179,185,191, 203,209,
 
 # ---------- EXERCISE 2 BEGINS HERE ---------- #
 
+# ----- GARAGES ----- #
+garage_shape = [2,1,2]
+garage_pattern = [[9,8.8],[totY],[we+0.05,3]]
+garage = assemblyDiagramInit(garage_shape)(garage_pattern)
+
+gar1_shape = [4,5,2]
+gar1_pattern = [[1,3.5,we,4.25],[1.4,3.5,1,3.5,1.5],[2.5,0.7]]
+gar1 = assemblyDiagramInit(gar1_shape)(gar1_pattern)
+
+garage = diagram2cell(gar1,garage,3)
+garage = rem([19,21,35,39],garage)
+
+# hpc = cn(garage)
+# VIEW(hpc)
+# DRAW(garage)
+
 #whole building structure
 total_shape = [1,2,8]
 total_pattern = [[totX],2*[totY],8*[we+3]]
@@ -217,6 +233,7 @@ total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterS,total,1)
 total = diagram2cell(masterStop,total,1)
+total = diagram2cell(garage,total,1)
 
 hpc = cn(total)
 #VIEW(hpc)
@@ -255,8 +272,12 @@ maindoor1 = T([1,2,3])([we+Lx+we-0.25,we+Ly+we+Ky+Ky/2,3.25])(maindoor1)
 
 #hole in a single cell
 totalview = MKPOLS(total)
-totalview[20] = DIFFERENCE([totalview[20],maindoor1])
 
+# hpc = cn(total)
+# VIEW(hpc)
+# DRAW(total)
+
+totalview[19] = DIFFERENCE([totalview[19],maindoor1])
 
 #function to make Bezier curve giving control points
 def makeBez(cp):
