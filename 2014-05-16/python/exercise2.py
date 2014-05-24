@@ -301,10 +301,10 @@ def semiDisk(pi,h,r,q):
 # street = STRUCT([street1,street2,street3,street4,street5])
 # street = PROD([SOLIDIFY(street), Q(0.1)])
 
-# ----- SIDEWALK ----- #
+# ----- SIDEWALKS ----- #
 sidewalk1 = CUBOID([2,totY*3,0.25])
 sidewalk1 = T([1,2,3])([-2,0,3.25])(sidewalk1)
-sidewalk2 = CUBOID([totX*3/2,2,0.25])
+sidewalk2 = CUBOID([totX+4+we+6.65,2,0.25])
 sidewalk2 = T([1,2,3])([0,-2,3.25])(sidewalk2)
 cornerwalk = R([1,2])(PI)(semiDisk(PI/2,0.25,2,16))
 cornerwalk = T([3])([3.25])(cornerwalk)
@@ -319,17 +319,17 @@ cornerA = DIFFERENCE([cornerwalk2,cornerwalk3])
 
 sidewalk = STRUCT([sidewalk1,sidewalk2,cornerwalk,sidewalk3,sidewalk4,cornerA])
 
-# ----- STREET ----- #
+# ----- STREETS ----- #
 street1 = CUBOID([10,totY*3,0.25])
 street1 = T([1,2,3])([-10,0,3])(street1)
-street2 = CUBOID([totX*3/2,10,0.25])
+street2 = CUBOID([totX+4+we+6.65,10,0.25])
 street2 = T([1,2,3])([0,-10,3])(street2)
 cornerstreet = R([1,2])(PI)(semiDisk(PI/2,0.25,10,16))
 cornerstreet = T([3])([3])(cornerstreet)
 
 street = STRUCT([street1,street2,cornerstreet,sidewalk])
 
-# ----- RAMP ----- #
+# ----- GARAGE RAMPS ----- #
 ramp1 = CUBOID([2,4,3.5])
 ramp1 = T([1,2,3])([0,totY*2,0])(ramp1)
 
@@ -342,7 +342,7 @@ ramp2 = T(1)(totY*4)(ramp2)
 
 ramps = STRUCT([ramp,ramp2])
 
-# ----- GARAGE STREET ----- #
+# ----- GARAGE STREETS ----- #
 gs1 = CUBOID([totX-9,4,0.25])
 gs1 = T([1,2,3])([9,totY*2,0])(gs1)
 
@@ -355,22 +355,45 @@ gscorner = T([1,2])([totX,totY*2])(gscorner)
 gs = STRUCT([gs1,gs2,gscorner])
 
 # ----- GARAGE WALLS ----- #
-gw1 = CUBOID([totX,we,3.5])
+gw1 = CUBOID([totX,we,5])
 gw1 = T([1,2,3])([0,totY*2+4,0])(gw1)
 
-gw2 = CUBOID([we,totY*2,3.5])
+gw2 = CUBOID([we,totY*2,5])
 gw2 = T([1,2,3])([totX+4,0,0])(gw2)
 
-gwcornerR = semiDisk(PI/2,3.5,4,1)
+gwcornerR = semiDisk(PI/2,5,4,1)
 gwcornerR = T([1,2])([totX,totY*2])(gwcornerR)
-gwcorner2 = semiDisk(PI/2,3.5,4.25,1)
+gwcorner2 = semiDisk(PI/2,5,4.25,1)
 gwcorner2 = T([1,2])([totX,totY*2])(gwcorner2)
 
 gwcorner = DIFFERENCE([gwcorner2,gwcornerR])
 
 gw = STRUCT([gw1,gw2,gwcorner])
+gars = STRUCT([gw,gs,ramps])
+
+# ----- GRASS ----- #
+grass1 = CUBOID([totX,6.65,3.25])
+grass1 = T([1,2])([0,totY*2+4+we])(grass1)
+grass2 = CUBOID([6.65,totY*2,3.25])
+grass2 = T([1,2])([totX+4+we,0])(grass2)
+ptsgrass = [[totX+4+we+6.65,totY*2],[totX+4+we,totY*2],[totX,totY*2+4+we],[totX,totY*2+4+we+6.65]]
+grass3 = JOIN(AA(MK)(ptsgrass))
+grass3 = PROD([grass3, Q(3.25)])
+
+grass = STRUCT([grass1,grass2,grass3])
+
+# ----- STREET LAMPS ----- #
+slamp1 = CYLINDER([0.07,6])(12)
+slamp2 = R([1,2])(PI/2)(R([2,3])(PI/2)(semiDisk(PI,0.8,0.07,16)))
+slamp2 = T([1,2,3])([-0.07,0,6])(slamp2)
+slamp = STRUCT([slamp1,slamp2])
+slamp3 = T([1,2,3])([-6,-6,3.25])(R([1,2])(PI/4)(slamp))
+slamp = T([1,2,3])([-8.5,totY*2+2,3.25])(slamp)
+slamps1 = STRUCT(NN(4)([slamp,T(2)(-8)]))
+slamps2 = R([1,2])(PI/2)(T(2)(-totY*2-2)(slamps1))
+
+slamps = STRUCT([slamps1,slamps2,slamp3])
 
 
-#totalview = STRUCT(MKPOLS(total))
 totalview = STRUCT(totalview)
-VIEW(STRUCT([totalview, stairs, roof, street, ramps, gs, gw]))
+VIEW(STRUCT([totalview, stairs, roof, street, gars, grass, slamps]))
