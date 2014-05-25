@@ -327,7 +327,7 @@ street2 = T([1,2,3])([0,-10,3])(street2)
 cornerstreet = R([1,2])(PI)(semiDisk(PI/2,0.25,10,16))
 cornerstreet = T([3])([3])(cornerstreet)
 
-street = STRUCT([street1,street2,cornerstreet,sidewalk])
+street = STRUCT([street1,street2,cornerstreet])
 
 # ----- GARAGE RAMPS ----- #
 ramp1 = CUBOID([2,4,3.5])
@@ -394,6 +394,54 @@ slamps2 = R([1,2])(PI/2)(T(2)(-totY*2-2)(slamps1))
 
 slamps = STRUCT([slamps1,slamps2,slamp3])
 
+# ----- WINDOWS GLASS ----- #
+glass_mat = [0,0.19,0.39,1, 0,0,0,0.2, 0,0,0,1, 0,0,0,1, 100]
+
+wglass1 = CUBOID([totX-5,0.05,3.2*6])
+wglass1 = T([1,2,3])([1,totY*2-0.125,3.5])(wglass1)
+#material:  	     ambient         diffuse  specular emission shininess
+wglass1 = MATERIAL(glass_mat)(wglass1)
+wglass2 = CUBOID([8,0.05,3])
+wglass2 = T([1,2,3])([6,totY*2-0.125,3.2*7])(wglass2)
+wglass2 = MATERIAL(glass_mat)(wglass2)
+
+wglass3 = CUBOID([0.05,totY*2-1,3.2*7])
+wglass3 = T([1,2,3])([totX-0.125,0.5,3.5])(wglass3)
+wglass3 = MATERIAL(glass_mat)(wglass3)
+
+wglass4 = T([2])([-(totY*2-0.25)])(wglass1)
+wglass5 = T([2])([-(totY*2-0.25)])(wglass2)
+
+wglass6 = CUBOID([0.05,1.5,3.2*6])
+wglass6 = T([1,2,3])([0.125,4.8,3.2])(wglass6)
+wglass6 = MATERIAL(glass_mat)(wglass6)
+
+wglass7 = T([2])([10.5])(wglass6)
+
+wglass = STRUCT([wglass1,wglass2,wglass3,wglass4,wglass5,wglass6,wglass7])
+
+# ----- CROSSWALKS ----- #
+crwalk1 = CUBOID([0.6,4.5,0.01])
+crwalk1 = T([1,2,3])([-3,totY*2+5,3.245])(crwalk1)
+
+crwalks = STRUCT(NN(5)([crwalk1,T([1])([-1.2])]))
+
+# ----- COLORS ----- #
+OCRA1 = rgb([255,230,185])
+BLACK1 = rgb([70,70,70])
+BLACK2 = rgb([90,90,90])
+GREY1 = rgb([200,200,200])
+GREEN1 = rgb([0,150,0])
+
+roof = COLOR(OCRA1)(roof)
+street = COLOR(BLACK1)(street)
+sidewalk = COLOR(BLACK2)(sidewalk)
+gars = COLOR(BLACK1)(gars)
+grass = COLOR(GREEN1)(grass)
+slamps = COLOR(GREY1)(slamps)
 
 totalview = STRUCT(totalview)
-VIEW(STRUCT([totalview, stairs, roof, street, gars, grass, slamps]))
+totalview = COLOR(OCRA1)(totalview)
+
+
+VIEW(STRUCT([totalview, stairs, roof, street, sidewalk, gars, grass, slamps, crwalks, wglass]))
