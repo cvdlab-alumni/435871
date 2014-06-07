@@ -59,7 +59,7 @@
         var root = new THREE.Object3D();
 
         // Lamp base
-        var lampColor = "#726774"
+        var lampColor = "#BAA8A3";
         var baseH = 1.5;
         var baseR = 7;
         var baseG = new THREE.CylinderGeometry(baseR, baseR, baseH, 40, 40, false);
@@ -73,14 +73,14 @@
         function mkJoint (radius, height) {
           var joint = new THREE.Object3D();
           var sphereGeometry = new THREE.SphereGeometry(radius, 20, 20);
-          var sphereMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shading: THREE.FlatShading});
+          var sphereMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
           var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
           sphere.position.set(0, 0, 0);
           sphere.castShadow = true;
           joint.add(sphere);
 
           var cylinderGeometry = new THREE.CylinderGeometry(radius, radius, height, 20, 20, false);
-          var cylinderMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shading: THREE.FlatShading});
+          var cylinderMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
           var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
           cylinder.position.set(0, height / 2 + radius, 0);
           cylinder.castShadow = true;
@@ -111,7 +111,7 @@
 
         // sphere before the lamp head
         var sphereHeadG = new THREE.SphereGeometry(radius, 20, 20);
-        var sphereHeadM = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shading: THREE.FlatShading});
+        var sphereHeadM = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
         var sphereHead = new THREE.Mesh(sphereHeadG, sphereHeadM);
         sphereHead.position.set(0, 0, 0);
         sphereHead.castShadow = true;
@@ -120,7 +120,7 @@
         // Lamp head structure
         var lampRadius = 8;
         var semiSphereG = new THREE.SphereGeometry(lampRadius, 20, 20, 0, -2*Math.PI, Math.PI, Math.PI/2);
-        var semiSphereM = new THREE.MeshPhongMaterial({color:lampColor, side:THREE.DoubleSide, metal:true, shading: THREE.FlatShading });
+        var semiSphereM = new THREE.MeshPhongMaterial({color:lampColor, side:THREE.DoubleSide, metal:true });
         var semiSphere = new THREE.Mesh(semiSphereG, semiSphereM);
         semiSphere.position.set(0, lampRadius + radius, 0);
         semiSphere.castShadow = true;
@@ -128,7 +128,7 @@
 
         // Light structure
         var lampG = new THREE.SphereGeometry(3.5, 20, 20);
-        var lampM = new THREE.MeshPhongMaterial({color:0xFFFF8F, transparent:true, opacity:0.5});
+        var lampM = new THREE.MeshPhongMaterial({color:0xFFFFDF, transparent:true, opacity:0.5});
         var lamp = new THREE.Mesh(lampG, lampM);
         lamp.position.set(0, 4-lampRadius, 0);
         semiSphere.add(lamp);
@@ -211,7 +211,7 @@
 
         // Spotlight into the camera
         spotLightPOV = spotLight.clone();
-        spotLightPOV.intensity = 1.5;
+        spotLightPOV.intensity = 1.7;
         spotLightPOV.position = camera.position;
         scene.add(spotLightPOV);
 
