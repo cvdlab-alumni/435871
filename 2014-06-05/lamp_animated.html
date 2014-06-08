@@ -23,6 +23,8 @@
     <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
     <script src="assets/libs/TrackballControls.js"></script>
     <script src="assets/fonts/gentilis_regular.typeface.js"></script>
+    <script src="assets/libs/tween.min.js"></script>
+    <script src="assets/libs/keyframe.js"></script>
         
     <script>
       $(function () {
@@ -39,7 +41,7 @@
         renderer.shadowMapEnabled = true;
 
         // Camera
-        camera.position.set(0, -250, 50);
+        camera.position.set(0, -350, 50);
         camera.up = new THREE.Vector3(0,0,1);
         camera.lookAt(scene.position);
 
@@ -59,7 +61,7 @@
         var root = new THREE.Object3D();
 
         // Lamp base
-        var lampColor = "#ADA2B3";
+        var lampColor = "#BAA8A3";
         var baseH = 1.5;
         var baseR = 7;
         var baseG = new THREE.CylinderGeometry(baseR, baseR, baseH, 40, 40, false);
@@ -128,7 +130,7 @@
 
         // Light structure
         var lampG = new THREE.SphereGeometry(3.5, 20, 20);
-        var lampM = new THREE.MeshBasicMaterial({color:0xFFFF99});
+        var lampM = new THREE.MeshPhongMaterial({color:0xFFFFDF, transparent:true, opacity:0.5});
         var lamp = new THREE.Mesh(lampG, lampM);
         lamp.position.set(0, 4-lampRadius, 0);
         semiSphere.add(lamp);
@@ -172,39 +174,16 @@
           steps: 1
         };
 
-        var options2 = {
-          size: 4,
-          height: 0.4,
-          font: "gentilis",
-          weight: "normal",
-          bevelThickness: 0.1,
-          bevelSize: 0,
-          bevelSegments: 12,
-          bevelEnabled: true,
-          curveSegments: 3,
-          steps: 1
-        };
-
         var textGeometry = new THREE.TextGeometry("P       X   A   R", options);
         var textMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
-        // the following line doesnt support shadow?
-        //var plane = THREE.SceneUtils.createMultiMaterialObject(geometry, [meshMaterial]);
         var pixarText = new THREE.Mesh(textGeometry, textMaterial);
         pixarText.castShadow = true;
         pixarText.rotation.x = Math.PI/2;
         pixarText.position.x = -30;
 
-        var animTextGeometry = new THREE.TextGeometry("A N I M A T I O N   S T U D I O S", options2);
-        var animTextMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
-        var animText = new THREE.Mesh(animTextGeometry, animTextMaterial);
-        //animText.castShadow = true;
-        animText.rotation.x = Math.PI/2;
-        animText.position.set(104,-37,0);
-
         var pixarRoot = new THREE.Object3D();
         pixarRoot.add(root);
         pixarRoot.add(pixarText);
-        pixarRoot.add(animText);
         pixarRoot.position.x = -80;
         pixarText.castShadow = true;
         scene.add(pixarRoot);
@@ -251,8 +230,9 @@
         lampRoot.rotation.y = 4.8; 
 
         root.rotation.x = Math.PI/2;
+        root.rotation.y = -Math.PI/2;
         root.position.z += 0.75;
-        root.position.x += 22;
+        //root.position.x += 22;
 
         $('body').append(renderer.domElement);
 
@@ -299,24 +279,67 @@
           if(value === false) {
             lampSpotLight.intensity = 0;
             lampPL.intensity = 0;
-            lamp.material = new THREE.MeshBasicMaterial({color:0xFFFFAA, transparent:true, opacity:0.5});
           } else {
             lampSpotLight.intensity = 3;
             lampPL.intensity = 6;
-            lamp.material = new THREE.MeshBasicMaterial({color:0xFFFF99});
           }
         });
-        // gui.add(controls, 'trackBall').onChange(function (value) {
-        //   trackBall = value;
-        // });
+        gui.add(controls, 'trackBall').onChange(function (value) {
+          trackBall = value;
+        });
 
+        var gridHelper = new THREE.GridHelper( 200, 50 );
+        gridHelper.position = new THREE.Vector3( 0, 0, 0 );
+        gridHelper.rotation.x = Math.PI/2;
+        scene.add(gridHelper);
+
+        var iTextGeometry = new THREE.TextGeometry("I", options);
+        var iTextMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
+        var iText = new THREE.Mesh(iTextGeometry, iTextMaterial);
+        iText.castShadow = true;
+        iText.rotation.x = Math.PI/2;
+        iText.position.x = -62;
+        scene.add(iText);
+
+        // Animations
+        var animator = null;
+        function initAnimator() {
+          animator = new KF.KeyFrameAnimator();
+          animator.init({ 
+            interps:
+              [
+                { 
+                  keys:[0.11, 0.22, 0.33, 0.44, 0.55, 0.66, 0.77, 0.88, 1.00], 
+                  values:[
+                    { x:225, y:-50, z:0.75},
+                    { x:219.75, y:-50, z:3},
+                    { x:213.16, y:-50, z:5.5},
+                    { x:206.58, y:-50, z:6.5},
+                    { x:200, y:-50, z:6.75},
+                    { x:193.428, y:-50, z:6.5},
+                    { x:186.85, y:-50, z:5.5},
+                    { x:180.26, y:-50, z:3},
+                    { x:175, y:-50, z:0.75},
+                  ],
+                  target: root.position
+                },
+              ],
+            loop: false,
+            duration: 1000,
+            easing: TWEEN.Easing.Linear.None
+          });
+        }
+
+        initAnimator();
         render();
+        animator.start();
 
         function render() {
           stats.update();
           if(trackBall === true) {
             trackballControls.update();
-          } 
+          }
+          KF.update();
           requestAnimationFrame(render);
           renderer.render(scene, camera);
         }
