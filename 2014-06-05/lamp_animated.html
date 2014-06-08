@@ -24,7 +24,6 @@
     <script src="assets/libs/TrackballControls.js"></script>
     <script src="assets/fonts/gentilis_regular.typeface.js"></script>
     <script src="assets/libs/tween.min.js"></script>
-    <script src="assets/libs/keyframe.js"></script>
         
     <script>
       $(function () {
@@ -241,8 +240,7 @@
 
         // Correct positioning
         // alpha
-        //joint1.rotation.y = 4.8; 
-        joint1.rotation.y = 3; 
+        joint1.rotation.y = 4.8; 
         // beta
         joint1.sphere.rotation.x = 0.4; 
         // gamma
@@ -255,9 +253,8 @@
         lampRoot.rotation.y = 4.8; 
 
         root.rotation.x = Math.PI/2;
-        //root.rotation.y = -Math.PI/2;
+        root.rotation.y = -Math.PI/2;
         root.position.z += 0.75;
-        //root.position.x += 22;
 
         $('body').append(renderer.domElement);
 
@@ -315,10 +312,10 @@
           trackBall = value;
         });
 
-        var gridHelper = new THREE.GridHelper( 200, 50 );
-        gridHelper.position = new THREE.Vector3( 0, 0, 0 );
-        gridHelper.rotation.x = Math.PI/2;
-        scene.add(gridHelper);
+        // var gridHelper = new THREE.GridHelper( 200, 50 );
+        // gridHelper.position = new THREE.Vector3( 0, 0, 0 );
+        // gridHelper.rotation.x = Math.PI/2;
+        // scene.add(gridHelper);
 
         var iTextGeometry = new THREE.TextGeometry("I", options);
         var iTextMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
@@ -329,62 +326,99 @@
         scene.add(iText);
 
 
-        // Animations
+        // Animations!
         root.position.set(225,-50,0.75);
 
-        // 4 jumps
-        var posXs = [225,220,213,206,200,193,187,180,175];
-        var posZs = [0.75,3,5.5,6.5,6.75,6.5,5.5,3,0.75];
+        function move() {
+          var posXs = [225,220,213,206,200,193,187,180,175];
+          var posZs = [0.75,3,5.5,6.5,6.75,6.5,5.5,3,0.75];
 
-        var time = 100;
-        var k = 1;
-        var nJumps = 4;
-        for(var j=0; j<nJumps; j++) {
-          for(var i=0; i<=posXs.length; i++) {
-            var lampTween = new TWEEN.Tween(root.position)
-              .to({ x: posXs[i], y: -50, z: posZs[i] }, time)
+          var time = 100;
+          var k = 1;
+          var h = 1;
+          var nJumps = 4;
+          // 4 jumps
+          for(var j=0; j<nJumps; j++) {
+            for(var i=0; i<=posXs.length; i++) {
+              var lampTween = new TWEEN.Tween(root.position)
+                .to({ x: posXs[i], y: -50, z: posZs[i] }, time)
+                .easing(TWEEN.Easing.Linear.None)
+                .delay(time*i)
+                .start(1000*k);
+              root.position.set(posXs[i],-50,posZs[i]);
+            }
+            k+=0.89;
+            for(var i=0;i<posXs.length;i++) { posXs[i] -= 50; }
+            root.position.set(posXs[0],-50,posZs[0]);
+          }
+
+          // alpha
+          var lampTween2 = new TWEEN.Tween(joint1.rotation)
+            .to({ x: 0, y: 3, z: 0 }, 1000)
+            .easing(TWEEN.Easing.Linear.None)
+            .delay(4200)
+            .start();
+
+          // epsilon
+          var lampTween3 = new TWEEN.Tween(lampRoot.sphereHead.rotation)
+            .to({ x: 1.6, y: 0, z: 0 }, 500)
+            .easing(TWEEN.Easing.Linear.None)
+            .delay(5300)
+            .start();
+
+          // jump over I from floor
+          var posYi = [-50,-49.5,-47.3,-44.7,-42.4,-38.1,-34,-31.8,-27,-22,-16,-7.8,0];
+          var posZi = [0.75,5,25,45,57,64,70,72,69,64,55,43,26];
+          for(var i=0; i<posYi.length; i++) {
+            var lampTween4 = new TWEEN.Tween(root.position)
+              .to({ x: root.position.x, y: posYi[i], z: posZi[i] }, time)
               .easing(TWEEN.Easing.Linear.None)
               .delay(time*i)
-              .start(1000*k);
-            root.position.set(posXs[i],-50,posZs[i]);
+              .start(6500);
+            root.position.set(root.position.x, posYi[i], posZi[i]);
           }
-          k+=0.89;
-          for(var i=0;i<posXs.length;i++) { posXs[i] -= 50; }
-          root.position.set(posXs[0],-50,posZs[0]);
-        }
 
-        // alpha
-        var lampTween2 = new TWEEN.Tween(joint1.rotation)
-          .to({ x: 0, y: 1.5, z: 0 }, 1000)
-          .easing(TWEEN.Easing.Linear.None)
-          .delay(4200)
-          .start();
-        //epsilon
-        var lampTween3 = new TWEEN.Tween(lampRoot.sphereHead.rotation)
-          .to({ x: 1.6, y: 0, z: 0 }, 500)
-          .easing(TWEEN.Easing.Linear.None)
-          .delay(5300)
-          .start();
-
-        // jump over I
-        time = 100;
-        var posYi = [-50,-49.5,-47.3,-44.7,-42.4,-38.1,-34,-31.8,-27,-22,-16,-7.8,0];
-        var posZi = [0.75,5,25,45,57,64,70,72,69,64,55,43,26];
-        for(var i=0; i<posYi.length; i++) {
-          var lampTween = new TWEEN.Tween(root.position)
-            .to({ x: root.position.x, y: posYi[i], z: posZi[i] }, time)
+          // zeta
+          var lampTween5 = new TWEEN.Tween(lampRoot.rotation)
+            .to({ x: 0, y: 1.9, z: 0 }, 1000)
             .easing(TWEEN.Easing.Linear.None)
-            .delay(time*i)
-            .start(6500);
-          root.position.set(root.position.x, posYi[i], posZi[i]);
+            .delay(8000)
+            .start(); 
+
+          // jump over I 2 times
+          var posZi2 = [26,56,26];
+          for(var j=0; j<2; j++) {
+            for(var i=0; i<posZi2.length; i++) {
+              var lampTween6 = new TWEEN.Tween(root.position)
+                .to({ x: root.position.x, y: root.position.y, z: posZi2[i] }, 2*time)
+                .easing(TWEEN.Easing.Sinusoidal.Out)
+                .delay(2*time*i)
+                .start(10000+h);
+              root.position.set(root.position.x, root.position.y, posZi2[i]);
+            }
+            h+=1000;
+          }
+
+          // jump over I last time
+          var posZi3 = [26,56,26,17,8,0.75];
+          for(var i=0; i<posZi3.length; i++) {
+            var lampTween6 = new TWEEN.Tween(root.position)
+              .to({ x: root.position.x, y: root.position.y, z: posZi3[i] }, 2*time)
+              .easing(TWEEN.Easing.Sinusoidal.Out)
+              .delay(2*time*i)
+              .start(12000);
+            root.position.set(root.position.x, root.position.y, posZi3[i]);
+          }
+
+          // the I go down (last animation finally -.-)
+          var lampTween7 = new TWEEN.Tween(iText.position)
+            .to({ x: iText.position.x, y: iText.position.y, z: -30 }, 200)
+            .easing(TWEEN.Easing.Linear.None)
+            .delay(12000)
+            .start(); 
         }
 
-        // alpha again
-        var lampTween4 = new TWEEN.Tween(joint1.rotation)
-          .to({ x: 0, y: 4.8, z: 0 }, 1000)
-          .easing(TWEEN.Easing.Linear.None)
-          .delay(9000)
-          .start();
+        move();
 
         render();
 
