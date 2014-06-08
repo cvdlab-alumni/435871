@@ -17,10 +17,10 @@
   </head> 
   <body>
     <!-- JavaScript libraries -->
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/three.js/r67/three.min.js"></script> 
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/2.1.1/jquery.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/stats.js/r11/Stats.min.js"></script>
-    <script src="http://cdnjs.cloudflare.com/ajax/libs/dat-gui/0.5/dat.gui.min.js"></script>
+    <script src="assets/libs/three.min.js"></script> 
+    <script src="assets/libs/jquery.min.js"></script>
+    <script src="assets/libs/Stats.min.js"></script>
+    <script src="assets/libs/dat.gui.min.js"></script>
     <script src="assets/libs/TrackballControls.js"></script>
     <script src="assets/fonts/gentilis_regular.typeface.js"></script>
     <script src="assets/libs/tween.min.js"></script>
@@ -41,7 +41,7 @@
         renderer.shadowMapEnabled = true;
 
         // Camera
-        camera.position.set(0, -350, 50);
+        camera.position.set(0, -250, 50);
         camera.up = new THREE.Vector3(0,0,1);
         camera.lookAt(scene.position);
 
@@ -61,11 +61,11 @@
         var root = new THREE.Object3D();
 
         // Lamp base
-        var lampColor = "#BAA8A3";
+        var lampColor = "#ADA2B3";
         var baseH = 1.5;
         var baseR = 7;
         var baseG = new THREE.CylinderGeometry(baseR, baseR, baseH, 40, 40, false);
-        var baseM = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
+        var baseM = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shininess: 250});
         var base = new THREE.Mesh(baseG, baseM);
         base.position.set(0, 0, 0);
         base.castShadow = true;
@@ -75,14 +75,14 @@
         function mkJoint (radius, height) {
           var joint = new THREE.Object3D();
           var sphereGeometry = new THREE.SphereGeometry(radius, 20, 20);
-          var sphereMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
+          var sphereMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shininess: 250});
           var sphere = new THREE.Mesh(sphereGeometry, sphereMaterial);
           sphere.position.set(0, 0, 0);
           sphere.castShadow = true;
           joint.add(sphere);
 
           var cylinderGeometry = new THREE.CylinderGeometry(radius, radius, height, 20, 20, false);
-          var cylinderMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
+          var cylinderMaterial = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shininess: 250});
           var cylinder = new THREE.Mesh(cylinderGeometry, cylinderMaterial);
           cylinder.position.set(0, height / 2 + radius, 0);
           cylinder.castShadow = true;
@@ -113,7 +113,7 @@
 
         // sphere before the lamp head
         var sphereHeadG = new THREE.SphereGeometry(radius, 20, 20);
-        var sphereHeadM = new THREE.MeshPhongMaterial({color:lampColor, metal:true});
+        var sphereHeadM = new THREE.MeshPhongMaterial({color:lampColor, metal:true, shininess: 250});
         var sphereHead = new THREE.Mesh(sphereHeadG, sphereHeadM);
         sphereHead.position.set(0, 0, 0);
         sphereHead.castShadow = true;
@@ -122,7 +122,7 @@
         // Lamp head structure
         var lampRadius = 8;
         var semiSphereG = new THREE.SphereGeometry(lampRadius, 20, 20, 0, -2*Math.PI, Math.PI, Math.PI/2);
-        var semiSphereM = new THREE.MeshPhongMaterial({color:lampColor, side:THREE.DoubleSide, metal:true });
+        var semiSphereM = new THREE.MeshPhongMaterial({color:lampColor, side:THREE.DoubleSide, metal:true, shininess: 250 });
         var semiSphere = new THREE.Mesh(semiSphereG, semiSphereM);
         semiSphere.position.set(0, lampRadius + radius, 0);
         semiSphere.castShadow = true;
@@ -130,7 +130,7 @@
 
         // Light structure
         var lampG = new THREE.SphereGeometry(3.5, 20, 20);
-        var lampM = new THREE.MeshPhongMaterial({color:0xFFFFDF, transparent:true, opacity:0.5});
+        var lampM = new THREE.MeshBasicMaterial({color:0xFFFF99});
         var lamp = new THREE.Mesh(lampG, lampM);
         lamp.position.set(0, 4-lampRadius, 0);
         semiSphere.add(lamp);
@@ -150,8 +150,9 @@
         //lampSpotLight.shadowCameraVisible = true;
         lampSpotLight.position = lamp.position;
         var lampPL = new THREE.PointLight(0xFFFFCC);
-        lampPL.distance = 10;
+        lampPL.distance = 15;
         lampPL.intensity = 6;
+        lampPL.position = lamp.position;
         lamp.add(lampSpotLight);
         lamp.add(lampPL);
 
@@ -174,16 +175,39 @@
           steps: 1
         };
 
+        var options2 = {
+          size: 4,
+          height: 0.4,
+          font: "gentilis",
+          weight: "normal",
+          bevelThickness: 0.1,
+          bevelSize: 0,
+          bevelSegments: 12,
+          bevelEnabled: true,
+          curveSegments: 3,
+          steps: 1
+        };
+
         var textGeometry = new THREE.TextGeometry("P       X   A   R", options);
         var textMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
+        // the following line doesnt support shadow?
+        //var plane = THREE.SceneUtils.createMultiMaterialObject(geometry, [meshMaterial]);
         var pixarText = new THREE.Mesh(textGeometry, textMaterial);
         pixarText.castShadow = true;
         pixarText.rotation.x = Math.PI/2;
         pixarText.position.x = -30;
 
+        var animTextGeometry = new THREE.TextGeometry("A N I M A T I O N   S T U D I O S", options2);
+        var animTextMaterial = new THREE.MeshPhongMaterial({color: 0x000000});
+        var animText = new THREE.Mesh(animTextGeometry, animTextMaterial);
+        //animText.castShadow = true;
+        animText.rotation.x = Math.PI/2;
+        animText.position.set(104,-37,0);
+
         var pixarRoot = new THREE.Object3D();
         pixarRoot.add(root);
         pixarRoot.add(pixarText);
+        pixarRoot.add(animText);
         pixarRoot.position.x = -80;
         pixarText.castShadow = true;
         scene.add(pixarRoot);
@@ -217,7 +241,8 @@
 
         // Correct positioning
         // alpha
-        joint1.rotation.y = 4.8; 
+        //joint1.rotation.y = 4.8; 
+        joint1.rotation.y = 3; 
         // beta
         joint1.sphere.rotation.x = 0.4; 
         // gamma
@@ -230,7 +255,7 @@
         lampRoot.rotation.y = 4.8; 
 
         root.rotation.x = Math.PI/2;
-        root.rotation.y = -Math.PI/2;
+        //root.rotation.y = -Math.PI/2;
         root.position.z += 0.75;
         //root.position.x += 22;
 
@@ -279,9 +304,11 @@
           if(value === false) {
             lampSpotLight.intensity = 0;
             lampPL.intensity = 0;
+            lamp.material = new THREE.MeshBasicMaterial({color:0xFFFFAA, transparent:true, opacity:0.5});
           } else {
             lampSpotLight.intensity = 3;
             lampPL.intensity = 6;
+            lamp.material = new THREE.MeshBasicMaterial({color:0xFFFF99});
           }
         });
         gui.add(controls, 'trackBall').onChange(function (value) {
@@ -301,45 +328,72 @@
         iText.position.x = -62;
         scene.add(iText);
 
+
         // Animations
-        var animator = null;
-        function initAnimator() {
-          animator = new KF.KeyFrameAnimator();
-          animator.init({ 
-            interps:
-              [
-                { 
-                  keys:[0.11, 0.22, 0.33, 0.44, 0.55, 0.66, 0.77, 0.88, 1.00], 
-                  values:[
-                    { x:225, y:-50, z:0.75},
-                    { x:219.75, y:-50, z:3},
-                    { x:213.16, y:-50, z:5.5},
-                    { x:206.58, y:-50, z:6.5},
-                    { x:200, y:-50, z:6.75},
-                    { x:193.428, y:-50, z:6.5},
-                    { x:186.85, y:-50, z:5.5},
-                    { x:180.26, y:-50, z:3},
-                    { x:175, y:-50, z:0.75},
-                  ],
-                  target: root.position
-                },
-              ],
-            loop: false,
-            duration: 1000,
-            easing: TWEEN.Easing.Linear.None
-          });
+        root.position.set(225,-50,0.75);
+
+        // 4 jumps
+        var posXs = [225,220,213,206,200,193,187,180,175];
+        var posZs = [0.75,3,5.5,6.5,6.75,6.5,5.5,3,0.75];
+
+        var time = 100;
+        var k = 1;
+        var nJumps = 4;
+        for(var j=0; j<nJumps; j++) {
+          for(var i=0; i<=posXs.length; i++) {
+            var lampTween = new TWEEN.Tween(root.position)
+              .to({ x: posXs[i], y: -50, z: posZs[i] }, time)
+              .easing(TWEEN.Easing.Linear.None)
+              .delay(time*i)
+              .start(1000*k);
+            root.position.set(posXs[i],-50,posZs[i]);
+          }
+          k+=0.89;
+          for(var i=0;i<posXs.length;i++) { posXs[i] -= 50; }
+          root.position.set(posXs[0],-50,posZs[0]);
         }
 
-        initAnimator();
+        // alpha
+        var lampTween2 = new TWEEN.Tween(joint1.rotation)
+          .to({ x: 0, y: 1.5, z: 0 }, 1000)
+          .easing(TWEEN.Easing.Linear.None)
+          .delay(4200)
+          .start();
+        //epsilon
+        var lampTween3 = new TWEEN.Tween(lampRoot.sphereHead.rotation)
+          .to({ x: 1.6, y: 0, z: 0 }, 500)
+          .easing(TWEEN.Easing.Linear.None)
+          .delay(5300)
+          .start();
+
+        // jump over I
+        time = 100;
+        var posYi = [-50,-49.5,-47.3,-44.7,-42.4,-38.1,-34,-31.8,-27,-22,-16,-7.8,0];
+        var posZi = [0.75,5,25,45,57,64,70,72,69,64,55,43,26];
+        for(var i=0; i<posYi.length; i++) {
+          var lampTween = new TWEEN.Tween(root.position)
+            .to({ x: root.position.x, y: posYi[i], z: posZi[i] }, time)
+            .easing(TWEEN.Easing.Linear.None)
+            .delay(time*i)
+            .start(6500);
+          root.position.set(root.position.x, posYi[i], posZi[i]);
+        }
+
+        // alpha again
+        var lampTween4 = new TWEEN.Tween(joint1.rotation)
+          .to({ x: 0, y: 4.8, z: 0 }, 1000)
+          .easing(TWEEN.Easing.Linear.None)
+          .delay(9000)
+          .start();
+
         render();
-        animator.start();
 
         function render() {
           stats.update();
           if(trackBall === true) {
             trackballControls.update();
           }
-          KF.update();
+          TWEEN.update();
           requestAnimationFrame(render);
           renderer.render(scene, camera);
         }
