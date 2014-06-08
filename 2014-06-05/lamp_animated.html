@@ -308,9 +308,9 @@
             lamp.material = new THREE.MeshBasicMaterial({color:0xFFFF99});
           }
         });
-        gui.add(controls, 'trackBall').onChange(function (value) {
-          trackBall = value;
-        });
+        // gui.add(controls, 'trackBall').onChange(function (value) {
+        //   trackBall = value;
+        // });
 
         // var gridHelper = new THREE.GridHelper( 200, 50 );
         // gridHelper.position = new THREE.Vector3( 0, 0, 0 );
@@ -414,7 +414,7 @@
           var lampTween7 = new TWEEN.Tween(iText.position)
             .to({ x: iText.position.x, y: iText.position.y, z: -30 }, 200)
             .easing(TWEEN.Easing.Linear.None)
-            .delay(12000)
+            .delay(11900)
             .start(); 
         }
 
