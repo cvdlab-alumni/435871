@@ -8,7 +8,7 @@ DRAW = COMP([VIEW,STRUCT,MKPOLS])
 #cn = cellNumbering
 def cn(master):
 	hpc = SKEL_1(STRUCT(MKPOLS(master)))
-	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,1)
+	hpc = cellNumbering(master,hpc)(range(len(master[1])),YELLOW,2)
 	return hpc
 
 #rem = remove: remove walls
@@ -66,108 +66,172 @@ master = diagram2cell(kitchen,master,44)
 master = diagram2cell(kitchen,master,43)
 master = diagram2cell(kitchen,master,42)
 
-#removing cells to make the rooms
-toRemove = [0,1,2,3,14,15,16,17,21,23,25,62,64,66,75,77,80,83,85,87,88,90,95]
-master = rem(toRemove,master)
-#hpc = cn(master)
+hpc = cn(master)
 #VIEW(hpc)
+#removing cells to make the rooms
+# toRemove = [0,1,2,3,14,15,16,17,21,23,25,62,64,66,75,77,80,83,85,87,88,90,95]
+# master = rem(toRemove,master)
+# hpc = cn(master)
+# VIEW(hpc)
 #DRAW(master)
+
 
 # ----- DOORS ----- #
 #main door and kitchen
 d12_shape = [5,1,2]
-d12_pattern = [[2.3,1.5,5.3,0.8,1.1+wi+2],[1],[2,0.8]]
+d12_pattern = [[2.2,1.25,5.7,0.85,1.0+wi+2],[1],[2.1,0.9]]
 d12 = assemblyDiagramInit(d12_shape)(d12_pattern)
-master = diagram2cell(d12,master,32)
+master = diagram2cell(d12,master,43)
 
 #doors: lounge, myroom, bedroom
 d345_shape = [7,1,2]
-d345_pattern = [[1.9,0.8,0.8+wi+2,0.8,1.2+wi+0.2,0.8,3],[1],[2,0.8]]
+d345_pattern = [[1.9,0.85,0.75+wi+2,0.85,1.15+wi+0.2,0.85,2.95],[1],[2.1,0.9]]
 d345 = assemblyDiagramInit(d345_shape)(d345_pattern)
-master = diagram2cell(d345,master,33)
+master = diagram2cell(d345,master,44)
 
 #doors: bathroom
 d6_shape = [1,3,2]
-d6_pattern = [[1],[0.6,0.8,0.6],[2,0.8]]
+d6_pattern = [[1],[0.6,0.85,0.55],[2.1,0.9]]
 d6 = assemblyDiagramInit(d6_shape)(d6_pattern)
-master = diagram2cell(d6,master,59)
+master = diagram2cell(d6,master,74)
 
 #doors: loft
 d7_shape = [1,3,3]
-d7_pattern = [[1],[0.6,0.8,0.6],[0.2,1.8,0.8]]
+d7_pattern = [[1],[0.6,0.8,0.6],[0.2,1.9,0.9]]
 d7 = assemblyDiagramInit(d7_shape)(d7_pattern)
-master = diagram2cell(d7,master,24)
+master = diagram2cell(d7,master,35)
 
 #doors: elevator
 d8_shape = [1,3,2]
-d8_pattern = [[1],[2,1,0.5],[1.8,1]]
+d8_pattern = [[1],[2,1,0.5],[1.9,1.1]]
 d8 = assemblyDiagramInit(d8_shape)(d8_pattern)
-master = diagram2cell(d8,master,62)
+master = diagram2cell(d8,master,80)
 
 #stairs hole
-sh_shape = [2,1,1]
-sh_pattern = [[2,2.5],[1],[1]]
-sh = assemblyDiagramInit(sh_shape)(sh_pattern)
-master = diagram2cell(sh,master,58)
-master = diagram2cell(sh,master,65)
+# sh_shape = [2,1,1]
+# sh_pattern = [[2,2.5],[1],[1]]
+# sh = assemblyDiagramInit(sh_shape)(sh_pattern)
+# master = diagram2cell(sh,master,74)
+# master = diagram2cell(sh,master,65)
+
 
 #removing doors to make entrable rooms
-master = rem([70,74,80,84,88,94,102,109,113,115],master)
+#master = rem([70,74,80,84,88,94,102,109,113,115],master)
 #hpc = cn(master)
 #VIEW(hpc)
 #DRAW(master)
 
 # ----- WINDOWS ----- #
 #heights
-wh = [0.8,1.2,1]
+wh = [0.9,1.2,0.9]
 #kitchen window
-w1_shape = [1,5,3]
-w1_pattern = [[1],[0.9,0.6,0.1,0.6,1.3],[1.2,0.8,1]]
+w1_shape = [1,3,3]
+w1_pattern = [[1],[0.9,1.2,1.4],wh]
 w1 = assemblyDiagramInit(w1_shape)(w1_pattern)
-master = diagram2cell(w1,master,61)
+master = diagram2cell(w1,master,81)
 
 #kitchen window 2
 w2_shape = [1,3,3]
-w2_pattern = [[1],[0.4,0.8,2.3],wh]
+w2_pattern = [[1],[0.4,0.7,2.4],wh]
 w2 = assemblyDiagramInit(w2_shape)(w2_pattern)
-master = diagram2cell(w2,master,37)
+master = diagram2cell(w2,master,48)
 
 #bathroom window
 w3_shape = [1,3,3]
-w3_pattern = [[1],[0.6,0.8,0.6],wh]
+w3_pattern = [[1],[0.5,1,0.5],wh]
 w3 = assemblyDiagramInit(w3_shape)(w3_pattern)
-master = diagram2cell(w3,master,40)
+master = diagram2cell(w3,master,51)
 
 #bedroom window
 #pattern 3 windows
-wdiv3 = [1.2,0.6,0.1,0.6,0.1,0.6,1.3]
-w4_shape = [1,7,3]
+wdiv3 = [1.4,1.8,1.3]
+w4_shape = [1,3,3]
 w4_pattern = [[1],wdiv3,wh]
 w4 = assemblyDiagramInit(w4_shape)(w4_pattern)
-master = diagram2cell(w4,master,43)
+master = diagram2cell(w4,master,54)
 
 #lounge and myroom windows
-w56_shape = [15,1,3]
-w56_pattern = [[0.8,0.6,0.1,0.5,0.1,0.6,0.8,wi+1.1,0.6,0.1,0.5,0.1,0.6,1+wi,4+we],[1],wh]
+w56_shape = [7,1,3]
+w56_pattern = [[0.8,1.8,0.9,wi+1.2,1.8,1+wi,4+we],[1],wh]
 w56 = assemblyDiagramInit(w56_shape)(w56_pattern)
-master = diagram2cell(w56,master,33)
+master = diagram2cell(w56,master,44)
 
 # ----- TOP FLOOR -----
 #saving the master of current state to make a different one for top floor
-mastertop = master
-mastertop = rem([106,112, 121, 130, 139,145,151, 160,166,172, 181,187,193],mastertop)
+#mastertop = master
+#mastertop = rem([106,112, 121, 130, 139,145,151, 160,166,172, 181,187,193],mastertop)
+
+
+loft_shape1 = [1,1,2]
+loft_pattern1 = [[1],[1],[2,1]]
+loft1 = assemblyDiagramInit(loft_shape1)(loft_pattern1)
+master = diagram2cell(loft1,master,19)
 
 #building the loft for 7th floor
 loft_shape = [1,1,2]
-loft_pattern = [[1],[1],[0.7,2.3]]
+loft_pattern = [[1],[1],[0.8,2.2]]
 loft = assemblyDiagramInit(loft_shape)(loft_pattern)
+master = diagram2cell(loft,master,5)
+master = diagram2cell(loft,master,6)
+master = diagram2cell(loft,master,7)
+master = diagram2cell(loft,master,8)
+master = diagram2cell(loft,master,9)
+master = diagram2cell(loft,master,21)
 
-loft2split = [1,2,3,4,5,11]
-for i in range(len(loft2split)):
-	mastertop = diagram2cell(loft,mastertop,loft2split[i])
+hpc = cn(master)
+#VIEW(hpc)
+#master = rem([0,1,2,3,9,10,11,12, 15,17,19, 48,50,52,61,62,65,68,69,70, 83,87,93,97,101,107,115,122, 130,139,148,157,166,175, 184,186,188,190,192,194,196],master)
+#DRAW(master)
 
-mastertop = rem([183,185,187,189,191,193,195],mastertop)
-#DRAW(mastertop)
+emptyChain = [0,1,2,3,9,10,11,12, 15,17,19, 48,50,52,61,62,65,68,69,70, 83,87,93,97,101,107,115,122, 130,139,148,157,166,175, 184,186,188,190,192,194,196]
+
+#CREDITS TO Leonardo Tilomelli for these functions
+def extractFacets(master, emptyChain=[]):
+    solidCV = [cell for k,cell in enumerate(master[1]) if not (k in emptyChain)]
+    exteriorCV =  [cell for k,cell in enumerate(master[1]) if k in emptyChain]
+    exteriorCV += exteriorCells(master)
+    CV = solidCV + exteriorCV
+    V = master[0]
+    FV = [f for f in larFacets((V,CV),3,len(exteriorCV))[1] if len(f) >= 4]
+    BF = boundaryCells(solidCV,FV)
+    boundaryFaces = [FV[face] for face in BF]
+    B_Rep = V,boundaryFaces
+    return B_Rep
+
+def extractTriaFacets(master, emptyChain=[]):
+    master = extractFacets(master,emptyChain)
+    master = quads2tria(master)
+    return master
+
+def objExporter((V,FV), filePath):
+    out_file = open(filePath,"w")
+    out_file.write("# List of Vertices:\n")
+    for v in V:
+        out_file.write("v")
+        for c in v:
+            out_file.write(" " + str(c))
+        out_file.write("\n")
+    out_file.write("# Face Definitions:\n")
+    for f in FV:
+        out_file.write("f")
+        for v in f:
+            out_file.write(" " + str(v+1))
+        out_file.write("\n")
+    out_file.close()
+
+master_factes_tria = extractTriaFacets(master, emptyChain)
+objExporter(master_factes_tria, "F:\master435871.obj")
+
+exit()
+
+
+# loft2split = [1,2,3,4,5,11]
+# for i in range(len(loft2split)):
+# 	mastertop = diagram2cell(loft,mastertop,loft2split[i])
+
+
+#mastertop = rem([183,185,187,189,191,193,195],mastertop)
+DRAW(mastertop)
 # ----- END TOP FLOOR ----- #
 
 #additional room window
