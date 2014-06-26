@@ -166,24 +166,29 @@ loft_shape1 = [1,1,2]
 loft_pattern1 = [[1],[1],[2,1]]
 loft1 = assemblyDiagramInit(loft_shape1)(loft_pattern1)
 master = diagram2cell(loft1,master,19)
+master = diagram2cell(loft1,master,5)
 
 #building the loft for 7th floor
 loft_shape = [1,1,2]
 loft_pattern = [[1],[1],[0.8,2.2]]
 loft = assemblyDiagramInit(loft_shape)(loft_pattern)
-master = diagram2cell(loft,master,5)
+
 master = diagram2cell(loft,master,6)
 master = diagram2cell(loft,master,7)
 master = diagram2cell(loft,master,8)
 master = diagram2cell(loft,master,9)
 master = diagram2cell(loft,master,21)
-
 hpc = cn(master)
-#VIEW(hpc)
+VIEW(hpc)
+
+
 #master = rem([0,1,2,3,9,10,11,12, 15,17,19, 48,50,52,61,62,65,68,69,70, 83,87,93,97,101,107,115,122, 130,139,148,157,166,175, 184,186,188,190,192,194,196],master)
 #DRAW(master)
 
-emptyChain = [0,1,2,3,9,10,11,12, 15,17,19, 48,50,52,61,62,65,68,69,70, 83,87,93,97,101,107,115,122, 130,139,148,157,166,175, 184,186,188,190,192,194,196]
+# emptyChain = [	0,1,2,3,9,10,11,12,15,17,19,48,50,52,
+# 				61,62,65,68,69,70,83,87,93,97,101,107,115,122,
+# 				130,139,148,157,166,175,184,186,188,190,192,194,196]
+emptyChain = [62]
 
 #CREDITS TO Leonardo Tilomelli for these functions
 def extractFacets(master, emptyChain=[]):
@@ -220,10 +225,11 @@ def objExporter((V,FV), filePath):
     out_file.close()
 
 master_factes_tria = extractTriaFacets(master, emptyChain)
-objExporter(master_factes_tria, "F:\master435871.obj")
+objExporter(master_factes_tria, "E:\Dropbox\Uni\Magistrale\Grafica Computazionale\JS\static-file-server\public\obj\master435871.obj")
 
 exit()
 
+#---------------------------------------------------------------
 
 # loft2split = [1,2,3,4,5,11]
 # for i in range(len(loft2split)):

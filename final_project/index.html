@@ -3,23 +3,17 @@
  <head> 
   <title>Final Project - Davide Violante - 435871</title> 
   <style>
-    body {
-      margin: 0;
-      overflow: hidden;
-    }
-    #stats {
-      position: absolute;
-      left: 0px;
-      top: 0px;
-    }
+    body { margin:0; overflow:hidden; }
+    #stats { position:absolute; left:0px; top:0px; }
   </style> 
   </head>
   <body>  
     <!-- JavaScript libraries -->
-    <script src="scripts/jquery.min.js"></script> 
-    <script src="scripts/three.min.js"></script>
-    <script src="scripts/Stats.min.js"></script>
-    <!-- Javascript code that runs our Three.js examples --> 
+    <script src="libs/jquery.min.js"></script> 
+    <script src="libs/three.min.js"></script>
+    <script src="libs/Stats.min.js"></script>
+    <script src="libs/OBJLoader.js"></script>
+    <script src="libs/TrackballControls.js"></script>
     <script>
       // once everything is loaded, we run our Three.js stuff.
       $(function () {
@@ -30,19 +24,41 @@
         var scene = new THREE.Scene();
 
         // create a camera, which defines where we're looking at.
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
 
         // create a render and set the size
         var renderer = new THREE.WebGLRenderer();
+        var trackballControls = new THREE.TrackballControls(camera);
 
         renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        
+        var spotLight = new THREE.SpotLight(0xffffff);
+        spotLight.position = camera.position;
+        spotLight.intensity = 1.2;
+        spotLight.angle = 90;
+        scene.add(spotLight);
 
-        // [...]
+        var loader = new THREE.OBJLoader();
+        loader.load('obj/master435871.obj', function (obj) {
+          var material = new THREE.MeshLambertMaterial({color: 0xFFFFFF, side: THREE.DoubleSide});
 
+          obj.traverse(function (child) {
+            if (child instanceof THREE.Mesh) {
+              child.material = material;
+            }
+          });
 
+          //mesh = obj;
+          obj.scale.set(10, 10, 10);
+          obj.rotation.x = -Math.PI/2;
+          obj.position.set(-50,0,50);
+          scene.add(obj);
+        });
+
+        camera.position.set(-100,120,100);
+        camera.up = new THREE.Vector3(0,1,0);
+        camera.lookAt(scene.position);
 
         // add the output of the renderer to the html element
         $('body').append(renderer.domElement);
@@ -52,7 +68,7 @@
 
         function render() {
           stats.update();
-
+          trackballControls.update();
           // render using requestAnimationFrame
           requestAnimationFrame(render);
           renderer.render(scene, camera);
