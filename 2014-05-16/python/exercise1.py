@@ -178,6 +178,7 @@ master = diagram2cell(loft,master,7)
 master = diagram2cell(loft,master,8)
 master = diagram2cell(loft,master,9)
 master = diagram2cell(loft,master,21)
+
 hpc = cn(master)
 VIEW(hpc)
 
@@ -185,10 +186,9 @@ VIEW(hpc)
 #master = rem([0,1,2,3,9,10,11,12, 15,17,19, 48,50,52,61,62,65,68,69,70, 83,87,93,97,101,107,115,122, 130,139,148,157,166,175, 184,186,188,190,192,194,196],master)
 #DRAW(master)
 
-# emptyChain = [	0,1,2,3,9,10,11,12,15,17,19,48,50,52,
-# 				61,62,65,68,69,70,83,87,93,97,101,107,115,122,
-# 				130,139,148,157,166,175,184,186,188,190,192,194,196]
-emptyChain = [62]
+emptyChain = [	0,1,2,3,9,10,11,12,15,17,19,48,50,52,
+ 				61,62,65,68,69,70,83,87,93,97,101,107,115,122,
+ 				130,139,148,157,166,175,184,186,188,190,192,194,196]
 
 #CREDITS TO Leonardo Tilomelli for these functions
 def extractFacets(master, emptyChain=[]):

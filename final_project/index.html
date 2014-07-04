@@ -3,60 +3,397 @@
  <head> 
   <title>Final Project - Davide Violante - 435871</title> 
   <style>
-    body { margin:0; overflow:hidden; }
+      body {
+        background-color: #ffffff;
+        margin: 0;
+        overflow: hidden;
+        font-family: Verdana;
+      }
+
     #stats { position:absolute; left:0px; top:0px; }
   </style> 
   </head>
-  <body>  
+  <body>
     <!-- JavaScript libraries -->
     <script src="libs/jquery.min.js"></script> 
     <script src="libs/three.min.js"></script>
     <script src="libs/Stats.min.js"></script>
     <script src="libs/OBJLoader.js"></script>
-    <script src="libs/TrackballControls.js"></script>
+    <script src="libs/OBJMTLLoader.js"></script> 
+    <script src="libs/MTLLoader.js"></script> 
+    <!--<script src="libs/TrackballControls.js"></script>-->
+    <script src="libs/OrbitControls.js"></script>
+    <script src="libs/SubdivisionModifier.js"></script>
+    <!--<script src="libs/PointerLockControls.js"></script>-->
     <script>
       // once everything is loaded, we run our Three.js stuff.
       $(function () {
 
         var stats = initStats();
-
-        // create a scene, that will hold all our elements such as objects, cameras and lights.
         var scene = new THREE.Scene();
+        var camera = new THREE.PerspectiveCamera(60, window.innerWidth / window.innerHeight, 0.1, 5000);
 
-        // create a camera, which defines where we're looking at.
-        var camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 10000);
+        //var trackballControls = new THREE.TrackballControls(camera);
+        var orbitControls = new THREE.OrbitControls(camera);
 
-        // create a render and set the size
-        var renderer = new THREE.WebGLRenderer();
-        var trackballControls = new THREE.TrackballControls(camera);
-
-        renderer.setClearColor(new THREE.Color(0xEEEEEE, 1.0));
+        var renderer = new THREE.WebGLRenderer({antialias:true});
+        renderer.setClearColor(new THREE.Color(0x33ADFF, 1.0));
         renderer.setSize(window.innerWidth, window.innerHeight);
 
-        var spotLight = new THREE.SpotLight(0xffffff);
-        spotLight.position = camera.position;
-        spotLight.intensity = 1.2;
-        spotLight.angle = 90;
-        scene.add(spotLight);
+        var axisHelper = new THREE.AxisHelper(100);
+        scene.add(axisHelper);
+
+        var anisotropyNumber = renderer.getMaxAnisotropy();
+
+        var pointLight = new THREE.PointLight(0xffffff);
+        pointLight.intensity = 1;
+        pointLight.position = camera.position;
+        scene.add(pointLight);
+        // var pointLight1 = new THREE.PointLight(0xffffff);
+        // pointLight1.intensity = 1.5;
+        // pointLight1.distance = 80;
+        // pointLight1.position.set(75,30,-86);
+        // scene.add(pointLight1);
+
+        var spotLight = new THREE.SpotLight(0xFFFFFF);
+        spotLight.intensity = 1;
+        spotLight.position.set(112,200,-60);
+        //scene.add(spotLight);
+
+        function mkCube(sizeX, sizeY, sizeZ, color) {
+            var cubeGeometry = new THREE.BoxGeometry(sizeX,sizeY,sizeZ);
+            var cubeMaterial = new THREE.MeshLambertMaterial({color: color})
+            var cube = new THREE.Mesh(cubeGeometry,cubeMaterial);
+            return cube;
+        }
+
+        // function mkPlane(sizeX,sizeZ,color) {
+        //     var planeGeometry = new THREE.PlaneGeometry(sizeX,sizeZ,20,20);
+        //     planeGeometry.computeVertexNormals();
+        //     var planeMaterial = new THREE.MeshLambertMaterial({color: color});
+        //     var plane = new THREE.Mesh(planeGeometry,planeMaterial);
+        //     return plane;
+        // }
+
+        // var floor_loft = mkPlane(50,66.5,0xFFFFFF);
+        // var floor_loft_tex = THREE.ImageUtils.loadTexture("textures/floor_loft.png");
+        // var floor_loft_texB = THREE.ImageUtils.loadTexture("textures/floor_loft-bump.png");
+        // floor_loft.material = new THREE.MeshPhongMaterial({map:floor_loft_tex, bumpMap:floor_loft_tex, bumpScale:-0.2});
+        // floor_loft_tex.wrapS = floor_loft_tex.wrapT = THREE.RepeatWrapping;
+        // floor_loft_texB.wrapS = floor_loft_texB.wrapT = THREE.RepeatWrapping;
+        // floor_loft_tex.repeat.set(10,14);
+        // floor_loft_tex.anisotropy = anisotropyNumber;
+        // floor_loft.position.set(27.5,2.7,-73.25);
+        // floor_loft.rotation.x = -Math.PI/2;
+        // scene.add(floor_loft);
+        
+        function mkSmoothBox(sizeX, sizeY, sizeZ, subdiv, texName) {
+            var modifier = new THREE.SubdivisionModifier(subdiv);
+            var cubeGeometry = new THREE.BoxGeometry(sizeX, sizeY, sizeZ, 3, 3, 3);
+            modifier.modify(cubeGeometry);
+            var tex = THREE.ImageUtils.loadTexture("textures/"+texName+".png");
+            var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xFF0000, map: tex})
+            var cube = new THREE.Mesh(cubeGeometry,cubeMaterial);
+            cubeGeometry.mergeVertices();
+            cubeGeometry.computeFaceNormals();
+            cubeGeometry.computeVertexNormals();
+            return cube;
+        }
+
+        cube = mkSmoothBox(20,20,20,1,"loft_floor");
+        //scene.add(cube);
+
+        // var cube = mkCube(10,30,0,0xFF0000);
+        // cube.position.set(90,2.5,-38.75);
+        // scene.add(cube);
+
+        //obj.children[1].material = material;
 
         var loader = new THREE.OBJLoader();
-        loader.load('obj/master435871.obj', function (obj) {
-          var material = new THREE.MeshLambertMaterial({color: 0xFFFFFF, side: THREE.DoubleSide});
-
-          obj.traverse(function (child) {
-            if (child instanceof THREE.Mesh) {
-              child.material = material;
-            }
-          });
-
-          //mesh = obj;
-          obj.scale.set(10, 10, 10);
-          obj.rotation.x = -Math.PI/2;
-          obj.position.set(-50,0,50);
-          scene.add(obj);
+        loader.load('obj/master.obj', function (obj) {
+            var material = new THREE.MeshPhongMaterial({color: 0xFFFFFF, side: THREE.DoubleSide});
+            obj.traverse(function (child) {
+                if (child instanceof THREE.Mesh) {
+                    child.material = material;
+                }
+            });
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
         });
 
-        camera.position.set(-100,120,100);
+        function myOBJloader(objName, texName, texBumpName, bumpScale, shine, repX, repZ) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var tex = THREE.ImageUtils.loadTexture("textures/"+texName+".png");
+                var material = new THREE.MeshPhongMaterial({
+                                                            map:tex,
+                                                            side:THREE.DoubleSide,
+                                                            metal:true,
+                                                            shininess:shine});
+                if (texBumpName) {
+                    var bump = THREE.ImageUtils.loadTexture("textures/"+texBumpName+".png");
+                    material.bumpMap = bump;
+                    material.bumpScale = bumpScale;
+                    bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+                    bump.repeat.set(repX,repZ);
+                    bump.anisotropy = anisotropyNumber;
+                }
+                tex.wrapS = tex.wrapT = THREE.RepeatWrapping;
+                tex.repeat.set(repX,repZ);
+                tex.anisotropy = anisotropyNumber;
+                obj.traverse(function (child) {
+                    if (child instanceof THREE.Mesh) {
+                        child.material = material;
+                    }
+                });
+                obj.rotation.x = -Math.PI/2;
+                scene.add(obj);
+            });
+        }
+
+        // FLOORS
+        myOBJloader("loft_floor", "loft_floor3", "loft_floor3", -0.2, 10, 3,4);
+        myOBJloader("lounge_floor", "floor_marble1", false, 0, 100, 2,3);
+        myOBJloader("corridor_floor", "floor_marble1", false, 0, 100, 5.2,1.5);
+        myOBJloader("myroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 1,2);
+        myOBJloader("bedroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 1,2);
+        myOBJloader("bathroom_floor", "bathroom_floor", "bathroom_floor-bump", 0.15, 200, 8,6);
+        myOBJloader("kitchen_floor", "kitchen_floor", "kitchen_floor-bump", 0.1, 100, 8,8);
+        myOBJloader("outside_floor", "floor_marble2", false, 0, 150, 2,2);
+
+        // WALLS
+        var wws = 0; // white wall shininess
+        var wwb = -0.2; // white wall bumpmap
+        // LOUNGE
+        myOBJloader("lounge_wall_left", "wall_white", "wall_white", wwb, wws, 8,4);
+        myOBJloader("lounge_wall_top", "wall_white", "wall_white", wwb, wws, 5,4);
+        myOBJloader("lounge_wall_right", "wall_white", "wall_white", wwb, wws, 6,4);
+        // BATHROOM and CORRIDOR
+        myOBJloader("bathroom_wall_top_bottom", "wall_white", "wall_white", wwb, wws, 4,4);
+        myOBJloader("bathroom_wall_rx_lx_corridor_rx", "wall_white", "wall_white", wwb, wws, 3,4);
+
+        myOBJloader("corridor_wall_bottom", "wall_white", "wall_white", wwb, wws, 10,4);
+        myOBJloader("corridor_wall_top", "wall_white", "wall_white", wwb, wws, 6,4);
+        // MY ROOM, BEDROOM, KITCHEN, ELEVATOR, OUTSIDE
+        myOBJloader("myroom_bedroom_kitchen_elevator_outside", "wall_white", "wall_white", wwb, wws, 4,4);
+
+        // EXTERNAL
+        myOBJloader("external_wall_top1", "wall_external", "wall_external-bump", wwb, wws, 18,4);
+        myOBJloader("external_wall_top2", "wall_external", "wall_external-bump", wwb, wws, 7,4);
+        myOBJloader("external_wall_left1", "wall_external", "wall_external-bump", wwb, wws, 8,4);
+        myOBJloader("external_wall_left2", "wall_external", "wall_external-bump", wwb, wws, 12,4);
+        myOBJloader("external_wall_bottom1", "wall_external", "wall_external-bump", wwb, wws, 11,4);
+        myOBJloader("external_wall_bottom2", "wall_external", "wall_external-bump", wwb, wws, 8,4);
+        myOBJloader("external_wall_bottom3", "wall_external", "wall_external-bump", wwb, wws, 8,2);
+        myOBJloader("external_wall_right1", "wall_external", "wall_external-bump", wwb, wws, 10,4);
+        myOBJloader("external_wall_right2", "wall_external", "wall_external-bump", wwb, wws, 8,2);
+
+        // DETAILS
+        myOBJloader("floor_doors", "floor_doors", false, 0, 100, 2,1);
+        myOBJloader("loft_marble", "loft_marble", false, 0, 10, 18,1);
+        myOBJloader("loft_entrance_marble", "loft_marble", false, 0, 10, 2,1);
+        myOBJloader("edges_loft", "edges_loft", "edges_loft", -0.2, 10, 8,1);
+        myOBJloader("edges_marble", "edges_marble", false, 0, 100, 6,1);
+        myOBJloader("edges_parquet", "edges_parquet", false, 0, 50, 5,1);
+        myOBJloader("white_jambs", "wall_white", "wall_white", -0.1, wws, 0.5,4);
+        myOBJloader("white_jambs_windows", "wall_white", "wall_white", -0.1, wws, 0.5,3);
+
+        // DOORS JAMB (stipite)
+        myOBJloader("doors_jamb", "doors_jamb", false, 0, 50, 1,5);
+
+
+        // BATHROOM TILES AWESOME
+        loader.load('obj/bathroom_tile_top_bottom.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor.png");
+            var tex2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            var tex3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile.png");
+            var tex4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            
+            var material1 = new THREE.MeshPhongMaterial({map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({map:tex2, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material3 = new THREE.MeshPhongMaterial({map:tex3, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material4 = new THREE.MeshPhongMaterial({map:tex4, side:THREE.DoubleSide, metal:true, shininess:50});
+            
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material3;
+            obj.children[3].material = material4;
+
+            var bump1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor-bump.png");
+            var bump2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+            var bump3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile-bump.png");
+            var bump4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+
+            material1.bumpMap = bump1;
+            material2.bumpMap = bump2;
+            material3.bumpMap = bump3;
+            material4.bumpMap = bump4;
+            material1.bumpScale = 0.05;
+            material2.bumpScale = 0.1;
+            material3.bumpScale = 0.05;
+            material4.bumpScale = 0.1;
+
+            bump1.wrapS = bump1.wrapT = bump2.wrapS = bump2.wrapT = bump3.wrapS = bump3.wrapT = bump4.wrapS = bump4.wrapT= THREE.RepeatWrapping;
+            bump1.repeat.set(8,2);
+            bump2.repeat.set(8,4);
+            bump3.repeat.set(4,0.45);
+            bump4.repeat.set(8,2);
+            bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
+        
+            tex1.wrapS = tex1.wrapT = tex2.wrapS = tex2.wrapT = tex3.wrapS = tex3.wrapT = tex4.wrapS = tex4.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(8,2);
+            tex2.repeat.set(8,4);
+            tex3.repeat.set(4,0.45);
+            tex4.repeat.set(8,2);
+            tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            var obj2 = obj.clone();
+            obj2.translateY(20);
+            scene.add(obj);
+            scene.add(obj2);
+        });
+
+        loader.load('obj/bathroom_tile_right.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor.png");
+            var tex2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            var tex3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile.png");
+            var tex4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            
+            var material1 = new THREE.MeshPhongMaterial({map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({map:tex2, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material3 = new THREE.MeshPhongMaterial({map:tex3, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material4 = new THREE.MeshPhongMaterial({map:tex4, side:THREE.DoubleSide, metal:true, shininess:50});
+            
+            obj.children[3].material = material1;
+            obj.children[2].material = material2;
+            obj.children[1].material = material3;
+            obj.children[0].material = material4;
+
+            var bump1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor-bump.png");
+            var bump2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+            var bump3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile-bump.png");
+            var bump4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+
+            material1.bumpMap = bump1;
+            material2.bumpMap = bump2;
+            material3.bumpMap = bump3;
+            material4.bumpMap = bump4;
+            material1.bumpScale = 0.05;
+            material2.bumpScale = 0.1;
+            material3.bumpScale = 0.05;
+            material4.bumpScale = 0.1;
+
+            bump1.wrapS = bump1.wrapT = bump2.wrapS = bump2.wrapT = bump3.wrapS = bump3.wrapT = bump4.wrapS = bump4.wrapT= THREE.RepeatWrapping;
+            bump1.repeat.set(6,2);
+            bump2.repeat.set(6,4);
+            bump3.repeat.set(3,0.45);
+            bump4.repeat.set(6,2);
+            bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
+        
+            tex1.wrapS = tex1.wrapT = tex2.wrapS = tex2.wrapT = tex3.wrapS = tex3.wrapT = tex4.wrapS = tex4.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(6,2);
+            tex2.repeat.set(6,4);
+            tex3.repeat.set(3,0.45);
+            tex4.repeat.set(6,2);
+            tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
+        });
+
+        loader.load('obj/bathroom_tile_left.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor.png");
+            var tex2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            var tex3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile.png");
+            var tex4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
+            
+            var material1 = new THREE.MeshPhongMaterial({map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({map:tex2, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material3 = new THREE.MeshPhongMaterial({map:tex3, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material4 = new THREE.MeshPhongMaterial({map:tex4, side:THREE.DoubleSide, metal:true, shininess:50});
+            
+            obj.children[3].material = material1;
+            obj.children[2].material = material2;
+            obj.children[1].material = material3;
+            obj.children[0].material = material4;
+
+            var bump1 = THREE.ImageUtils.loadTexture("textures/bathroom_floor-bump.png");
+            var bump2 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+            var bump3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile-bump.png");
+            var bump4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white-bump.png");
+
+            material1.bumpMap = bump1;
+            material2.bumpMap = bump2;
+            material3.bumpMap = bump3;
+            material4.bumpMap = bump4;
+            material1.bumpScale = 0.05;
+            material2.bumpScale = 0.1;
+            material3.bumpScale = 0.05;
+            material4.bumpScale = 0.1;
+
+            bump1.wrapS = bump1.wrapT = bump2.wrapS = bump2.wrapT = bump3.wrapS = bump3.wrapT = bump4.wrapS = bump4.wrapT= THREE.RepeatWrapping;
+            bump1.repeat.set(7,2);
+            bump2.repeat.set(7,4);
+            bump3.repeat.set(4,0.45);
+            bump4.repeat.set(7,2);
+            bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
+        
+            tex1.wrapS = tex1.wrapT = tex2.wrapS = tex2.wrapT = tex3.wrapS = tex3.wrapT = tex4.wrapS = tex4.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(7,2);
+            tex2.repeat.set(7,4);
+            tex3.repeat.set(4,0.45);
+            tex4.repeat.set(7,2);
+            tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
+        });
+        // END BATHROOM TILES
+
+        // KITCHEN TILES
+        myOBJloader("kitchen_tile_bottom1", "kitchen_tile", "kitchen_tile-bump", 0.02, 50, 13,8);
+        myOBJloader("kitchen_tile_bottom2", "kitchen_tile2", "kitchen_tile-bump", 0.02, 50, 13,8);
+        myOBJloader("kitchen_tile_left1", "kitchen_tile", "kitchen_tile-bump", 0.02, 50, 11,8);
+        myOBJloader("kitchen_tile_left2", "kitchen_tile2", "kitchen_tile-bump", 0.02, 50, 11,8);
+        myOBJloader("kitchen_tile_top1", "kitchen_tile", "kitchen_tile-bump", 0.02, 50, 13,8);
+        myOBJloader("kitchen_tile_top2", "kitchen_tile2", "kitchen_tile-bump", 0.02, 50, 13,8);
+        myOBJloader("kitchen_tile_right1", "kitchen_tile", "kitchen_tile-bump", 0.02, 50, 11,8);
+        myOBJloader("kitchen_tile_right2", "kitchen_tile2", "kitchen_tile-bump", 0.02, 50, 11,8);
+
+        // DOORS
+        function loadDoor(objName) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var tex1 = THREE.ImageUtils.loadTexture("textures/doors_jamb.png");
+
+                var material1 = new THREE.MeshPhongMaterial({color:0xCCCCCC, map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+                var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:50, opacity:0.9, transparent:true});
+                var material3 = new THREE.MeshPhongMaterial({color:0xE6B800, metal:true, shininess:300});
+
+                obj.children[0].material = material1;
+                obj.children[1].material = material2;
+                obj.children[2].material = material3;
+            
+                tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+                tex1.repeat.set(2,7);
+                tex1.anisotropy = anisotropyNumber;
+
+                obj.rotation.x = -Math.PI/2;
+                scene.add(obj);
+                //door = obj;
+            });
+        }
+
+        loadDoor("door_myroom");
+        loadDoor("door_bedroom");
+        loadDoor("door_bathroom");
+        loadDoor("door_kitchen");
+
+
+
+
+
+
+        camera.position.set(100,120,-100);
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(scene.position);
 
@@ -67,18 +404,19 @@
         render();
 
         function render() {
-          stats.update();
-          trackballControls.update();
-          // render using requestAnimationFrame
-          requestAnimationFrame(render);
-          renderer.render(scene, camera);
+            stats.update();
+            //trackballControls.update();
+            orbitControls.update();
+            requestAnimationFrame(render);
+            renderer.render(scene, camera);
+            pointLight.position = camera.position;
         }
 
         function initStats() {
-          var stats = new Stats();
-          stats.setMode(0); // 0: fps, 1: ms
-          $('body').append(stats.domElement);
-          return stats;
+            var stats = new Stats();
+            stats.setMode(0); // 0: fps, 1: ms
+            $('body').append(stats.domElement);
+            return stats;
         }
       });
     </script>  
