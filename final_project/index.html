@@ -388,8 +388,169 @@
         loadDoor("door_bathroom");
         loadDoor("door_kitchen");
 
+        // DOOR ENTRANCE
+        loader.load('obj/door_entrance.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/doors_jamb.png");
+            var material1 = new THREE.MeshPhongMaterial({color:0xCCCCCC, map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE6B800, metal:true, shininess:300});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+        
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(4,7);
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
+        });
 
 
+        // WINDOWS
+        loader.load('obj/window_lounge.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material1;
+            obj.children[3].material = material2;
+            obj.children[4].material = material1;
+            obj.children[5].material = material2;
+            obj.children[6].material = material3;
+            obj.children[7].material = material1;
+            obj.children[8].material = material1;
+
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(5,1);
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+
+            scene.add(obj);
+            var obj2 = obj.clone();
+            obj2.translateX(40.5);
+            scene.add(obj2);
+        });
+
+        loader.load('obj/window_loft.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material1;
+            obj.children[3].material = material2;
+            obj.children[4].material = material1;
+            obj.children[5].material = material1;
+
+            obj.rotation.x = -Math.PI/2;
+
+            scene.add(obj);
+        });
+
+        loader.load('obj/window_bedroom.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material1;
+            obj.children[3].material = material2;
+            obj.children[4].material = material1;
+            obj.children[5].material = material2;
+            obj.children[6].material = material3;
+            obj.children[7].material = material1;
+            obj.children[8].material = material1;
+
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(5,1);
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            
+            scene.add(obj);
+        });
+
+        loader.load('obj/window_bathroom.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material1;
+            obj.children[3].material = material2;
+            obj.children[4].material = material1;
+            obj.children[5].material = material3;
+            obj.children[6].material = material1;
+            obj.children[7].material = material1;
+
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(4,1);
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            
+            scene.add(obj);
+        });
+
+        loader.load('obj/window_kitchen1.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material1;
+            obj.children[3].material = material3;
+            obj.children[4].material = material1;
+            obj.children[5].material = material1;
+
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(3,1);
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            
+            scene.add(obj);
+        });
+
+        loader.load('obj/window_kitchen2.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.99, transparent:true, bumpMap:bump, bumpScale:0.05});
+            var material22 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.95, transparent:true});
+            var material3 = new THREE.MeshPhongMaterial({color:0x555555, metal:true, shininess:0});
+            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+            var material4 = new THREE.MeshPhongMaterial({map:tex1});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material1;
+            obj.children[2].material = material1;
+            obj.children[3].material = material2;
+            obj.children[4].material = material2;
+            obj.children[5].material = material3;
+            obj.children[6].material = material3;
+            obj.children[7].material = material4;
+
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(3,1);
+            bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+            bump.repeat.set(3,4);
+
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.rotation.x = -Math.PI/2;
+            
+            scene.add(obj);
+        });
 
 
 
@@ -422,3 +583,4 @@
     </script>  
  </body>
 </html>
+
