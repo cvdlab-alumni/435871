@@ -17,6 +17,7 @@
     <!-- JavaScript libraries -->
     <script src="libs/jquery.min.js"></script> 
     <script src="libs/three.min.js"></script>
+    <script src="libs/tween.min.js"></script>
     <script src="libs/Stats.min.js"></script>
     <script src="libs/OBJLoader.js"></script>
     <script src="libs/OBJMTLLoader.js"></script> 
@@ -37,16 +38,19 @@
         var orbitControls = new THREE.OrbitControls(camera);
 
         var renderer = new THREE.WebGLRenderer({antialias:true});
-        renderer.setClearColor(new THREE.Color(0x33ADFF, 1.0));
+        renderer.setClearColor(new THREE.Color(0x000000, 1.0)); // 0x33ADFF
         renderer.setSize(window.innerWidth, window.innerHeight);
+        
+        // list of the objects with an animation
+        var animatedList = [];
 
-        var axisHelper = new THREE.AxisHelper(100);
+        var axisHelper = new THREE.AxisHelper(50);
         scene.add(axisHelper);
 
         var anisotropyNumber = renderer.getMaxAnisotropy();
 
         var pointLight = new THREE.PointLight(0xffffff);
-        pointLight.intensity = 1;
+        pointLight.intensity = 0.9;
         pointLight.position = camera.position;
         scene.add(pointLight);
         // var pointLight1 = new THREE.PointLight(0xffffff);
@@ -161,7 +165,7 @@
         myOBJloader("outside_floor", "floor_marble2", false, 0, 150, 2,2);
 
         // WALLS
-        var wws = 0; // white wall shininess
+        var wws = 10; // white wall shininess
         var wwb = -0.2; // white wall bumpmap
         // LOUNGE
         myOBJloader("lounge_wall_left", "wall_white", "wall_white", wwb, wws, 8,4);
@@ -360,33 +364,63 @@
         myOBJloader("kitchen_tile_right1", "kitchen_tile", "kitchen_tile-bump", 0.02, 50, 11,8);
         myOBJloader("kitchen_tile_right2", "kitchen_tile2", "kitchen_tile-bump", 0.02, 50, 11,8);
 
-        // DOORS
-        function loadDoor(objName) {
+        var projector = new THREE.Projector();
+        document.addEventListener('mousedown', onDocumentMouseDown, false);
+
+        // -------------- DOORS -------------- 
+        function loadDoor(objName, posX, posY, posZ, angle) {
             loader.load('obj/'+objName+'.obj', function (obj) {
                 var tex1 = THREE.ImageUtils.loadTexture("textures/doors_jamb.png");
+                var mat1 = new THREE.MeshPhongMaterial({color:0xCCCCCC, map:tex1, metal:true, shininess:50});
+                var mat2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:50, opacity:0.9, transparent:true});
+                var mat3 = new THREE.MeshPhongMaterial({color:0xE6B800, metal:true, shininess:300});
 
-                var material1 = new THREE.MeshPhongMaterial({color:0xCCCCCC, map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
-                var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:50, opacity:0.9, transparent:true});
-                var material3 = new THREE.MeshPhongMaterial({color:0xE6B800, metal:true, shininess:300});
-
-                obj.children[0].material = material1;
-                obj.children[1].material = material2;
-                obj.children[2].material = material3;
+                obj.children[0].material = mat1;
+                obj.children[1].material = mat2;
+                obj.children[2].material = mat3;
             
                 tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
                 tex1.repeat.set(2,7);
                 tex1.anisotropy = anisotropyNumber;
 
                 obj.rotation.x = -Math.PI/2;
-                scene.add(obj);
-                //door = obj;
+
+                animatedList.push(obj.children[0]);
+                animatedList.push(obj.children[1]);
+                animatedList.push(obj.children[2]);
+
+                var o3dDoors = new THREE.Object3D();
+                o3dDoors.add(obj);
+
+                obj.isOpen = false;
+
+                obj.children[0].anim = obj.children[1].anim = obj.children[2].anim = function() {
+                    if(!obj.isOpen) {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dDoors.rotation)
+                            .to({x:0, y:angle, z:0 }, 1500)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .start();
+                        o3dDoors.position.set(posX, posY, -posZ);
+                        obj.isOpen = true;
+                    } else {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dDoors.rotation)
+                            .to({x:0, y:0, z:0 }, 1500)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .start();
+                        o3dDoors.position.set(posX, posY, -posZ);
+                        obj.isOpen = false;
+                    }
+                }
+                scene.add(o3dDoors);
             });
         }
 
-        loadDoor("door_myroom");
-        loadDoor("door_bedroom");
-        loadDoor("door_bathroom");
-        loadDoor("door_kitchen");
+        loadDoor("door_myroom", 121.108, 2.5, 61.1, -Math.PI/2);
+        loadDoor("door_bedroom", 136.928, 2.5, 61.1, Math.PI/2);
+        loadDoor("door_bathroom", 150.313, 2.5, 46.156, -Math.PI/2);
+        loadDoor("door_kitchen", 139.324, 2.5, 38.4, -Math.PI/2);
 
         // DOOR ENTRANCE
         loader.load('obj/door_entrance.obj', function (obj) {
@@ -396,178 +430,662 @@
 
             obj.children[0].material = material1;
             obj.children[1].material = material2;
-        
+
             tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
             tex1.repeat.set(4,7);
             tex1.anisotropy = anisotropyNumber;
 
             obj.rotation.x = -Math.PI/2;
-            scene.add(obj);
+
+            animatedList.push(obj.children[0]);
+            animatedList.push(obj.children[1]);
+
+            var o3dDoors = new THREE.Object3D();
+            o3dDoors.add(obj);
+
+            obj.isOpen = false;
+
+            obj.children[0].anim = obj.children[1].anim = function() {
+                var x = 75.167;
+                var y = 2.5;
+                var z = 38.953;
+                if(!obj.isOpen) {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dDoors.rotation)
+                        .to({x:0, y:Math.PI/2, z:0 }, 2000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    o3dDoors.position.set(x, y, -z);
+                    obj.isOpen = true;
+                } else {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dDoors.rotation)
+                        .to({x:0, y:0, z:0 }, 2000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    o3dDoors.position.set(x, y, -z);
+                    obj.isOpen = false;
+                }
+            }
+            scene.add(o3dDoors);
         });
-
-
-        // WINDOWS
-        loader.load('obj/window_lounge.obj', function (obj) {
+        // -------------- END DOORS ------------  
+        // -------------- WINDOWS -------------- 
+        loader.load('obj/window_lounge_myroom_bedroom_fixed.obj', function (obj) {
             var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
             var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
             var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
             var material3 = new THREE.MeshPhongMaterial({map:tex1});
 
-            obj.children[0].material = material1;
-            obj.children[1].material = material2;
-            obj.children[2].material = material1;
-            obj.children[3].material = material2;
-            obj.children[4].material = material1;
-            obj.children[5].material = material2;
-            obj.children[6].material = material3;
-            obj.children[7].material = material1;
-            obj.children[8].material = material1;
+            obj.children[0].material = material1; // wf
+            obj.children[1].material = material2; // wfg
+            obj.children[2].material = material3; // wmarble
 
             tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
             tex1.repeat.set(5,1);
             tex1.anisotropy = anisotropyNumber;
 
             obj.rotation.x = -Math.PI/2;
-
+            
+            // lounge window fixed
             scene.add(obj);
+
+            // myroom window fixed
             var obj2 = obj.clone();
-            obj2.translateX(40.5);
-            scene.add(obj2);
+            scene.add(obj2.translateX(40.5));
+
+            // bedroom window fixed
+            var obj3 = obj.clone();
+            obj3.position.set(-72.0, -17.475, 107.8);
+            var o3dbedroom = new THREE.Object3D();
+            o3dbedroom.add(obj3);
+            o3dbedroom.rotateY(-Math.PI/2);
+            o3dbedroom.position.set(176.8,17.475,-84.5);
+            scene.add(o3dbedroom);
         });
 
-        loader.load('obj/window_loft.obj', function (obj) {
-            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
-            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
+        function loadWindow(objName, posX, posY, posZ, angle) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+                var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
 
-            obj.children[0].material = material1;
-            obj.children[1].material = material2;
-            obj.children[2].material = material1;
-            obj.children[3].material = material2;
-            obj.children[4].material = material1;
-            obj.children[5].material = material1;
+                obj.children[0].material = material1; // window
+                obj.children[1].material = material2; // window glass
 
-            obj.rotation.x = -Math.PI/2;
+                obj.rotation.x = -Math.PI/2;
+      
+                animatedList.push(obj.children[0]);
+                animatedList.push(obj.children[1]);
 
-            scene.add(obj);
-        });
+                var o3dWindows = new THREE.Object3D();
+                o3dWindows.add(obj);
 
-        loader.load('obj/window_bedroom.obj', function (obj) {
-            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
-            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
-            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
-            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+                obj.isOpen = false;
 
-            obj.children[0].material = material1;
-            obj.children[1].material = material2;
-            obj.children[2].material = material1;
-            obj.children[3].material = material2;
-            obj.children[4].material = material1;
-            obj.children[5].material = material2;
-            obj.children[6].material = material3;
-            obj.children[7].material = material1;
-            obj.children[8].material = material1;
+                obj.children[0].anim = obj.children[1].anim = function() {
+                    if(!obj.isOpen) {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dWindows.rotation)
+                            .to({x:0, y:angle, z:0 }, 1000)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .start();
+                        o3dWindows.position.set(posX, posY, -posZ);
+                        obj.isOpen = true;
+                    } else {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dWindows.rotation)
+                            .to({x:0, y:0, z:0 }, 1000)
+                            .easing(TWEEN.Easing.Quadratic.Out)
+                            .start();
+                        o3dWindows.position.set(posX, posY, -posZ);
+                        obj.isOpen = false;
+                    }
+                }
+                scene.add(o3dWindows);
+            });
+        }
 
-            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
-            tex1.repeat.set(5,1);
-            tex1.anisotropy = anisotropyNumber;
+        loadWindow("window_lounge1", 63.56, 12.01, 107.2, -Math.PI/2);
+        loadWindow("window_lounge2", 74.963, 12.01, 107.2, Math.PI/2);
+        loadWindow("window_myroom1", 104.064, 12.01, 107.2, -Math.PI/2);
+        loadWindow("window_myroom2", 115.468, 12.01, 107.2, Math.PI/2);
+        loadWindow("window_bedroom1", 176.2, 12.01, 92.94, -Math.PI/2);
+        loadWindow("window_bedroom2", 176.2, 12.01, 81.537, Math.PI/2);
+        loadWindow("window_loft1", 54.26, 5.024, 53.694, Math.PI/2);
+        loadWindow("window_loft2", 54.26, 5.024, 46.313, -Math.PI/2);
+        loadWindow("window_bathroom1", 176.026, 12.03, 45.473, Math.PI/2);
+        loadWindow("window_bathroom2", 176.026, 5.022, 54.524, -Math.PI/2);
+        loadWindow("window_kitchen1", 176.096, 12.03, 7.027, Math.PI/2);
 
-            obj.rotation.x = -Math.PI/2;
-            
-            scene.add(obj);
-        });
+        function loadWindowFixed(objName) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+                var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
+                var material3 = new THREE.MeshPhongMaterial({map:tex1});
 
-        loader.load('obj/window_bathroom.obj', function (obj) {
-            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
-            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
-            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
-            var material3 = new THREE.MeshPhongMaterial({map:tex1});
+                obj.children[0].material = material1; // wf
 
-            obj.children[0].material = material1;
-            obj.children[1].material = material2;
-            obj.children[2].material = material1;
-            obj.children[3].material = material2;
-            obj.children[4].material = material1;
-            obj.children[5].material = material3;
-            obj.children[6].material = material1;
-            obj.children[7].material = material1;
+                if(obj.children[1]) {
+                    obj.children[1].material = material3; // wmarble     
+                    tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+                    tex1.repeat.set(3,1);
+                    tex1.anisotropy = anisotropyNumber;
+                }
+                obj.rotation.x = -Math.PI/2;
 
-            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
-            tex1.repeat.set(4,1);
-            tex1.anisotropy = anisotropyNumber;
+                scene.add(obj);
+            });
+        }
 
-            obj.rotation.x = -Math.PI/2;
-            
-            scene.add(obj);
-        });
+        loadWindowFixed("window_loft_fixed");
+        loadWindowFixed("window_bathroom_fixed");
+        loadWindowFixed("window_kitchen1_fixed");
+        loadWindowFixed("window_kitchen2_fixed");
 
-        loader.load('obj/window_kitchen1.obj', function (obj) {
-            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
-            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.5, transparent:true});
-            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
-            var material3 = new THREE.MeshPhongMaterial({map:tex1});
-
-            obj.children[0].material = material1;
-            obj.children[1].material = material2;
-            obj.children[2].material = material1;
-            obj.children[3].material = material3;
-            obj.children[4].material = material1;
-            obj.children[5].material = material1;
-
-            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
-            tex1.repeat.set(3,1);
-            tex1.anisotropy = anisotropyNumber;
-
-            obj.rotation.x = -Math.PI/2;
-            
-            scene.add(obj);
-        });
-
-        loader.load('obj/window_kitchen2.obj', function (obj) {
+        // KITCHEN SLIDING WINDOWS
+        loader.load('obj/window_kitchen21.obj', function (obj) {
             var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
             var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
-            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.99, transparent:true, bumpMap:bump, bumpScale:0.05});
-            var material22 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.95, transparent:true});
-            var material3 = new THREE.MeshPhongMaterial({color:0x555555, metal:true, shininess:0});
-            var tex1 = THREE.ImageUtils.loadTexture("textures/loft_marble.png");
-            var material4 = new THREE.MeshPhongMaterial({map:tex1});
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.98, transparent:true, bumpMap:bump, bumpScale:0.05});
+            var material3 = new THREE.MeshPhongMaterial({color:0x444444, metal:true, shininess:0});
 
             obj.children[0].material = material1;
-            obj.children[1].material = material1;
-            obj.children[2].material = material1;
-            obj.children[3].material = material2;
-            obj.children[4].material = material2;
-            obj.children[5].material = material3;
-            obj.children[6].material = material3;
-            obj.children[7].material = material4;
+            obj.children[1].material = material2;
+            obj.children[2].material = material3;
 
-            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
-            tex1.repeat.set(3,1);
+            obj.rotation.x = -Math.PI/2;
+
             bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
             bump.repeat.set(3,4);
 
-            tex1.anisotropy = anisotropyNumber;
-
-            obj.rotation.x = -Math.PI/2;
+            animatedList.push(obj.children[0]);
+            animatedList.push(obj.children[1]);
+            animatedList.push(obj.children[2]);
             
+            obj.isOpen = false;
+
+            obj.children[0].anim = obj.children[1].anim = obj.children[2].anim = function() {
+                if(!obj.isOpen) {
+                    var tw = new TWEEN.Tween(obj.position)
+                        .to({x:0, y:0, z:2.5 }, 1000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    obj.isOpen = true;
+                } else {
+                    var tw = new TWEEN.Tween(obj.position)
+                        .to({x:0, y:0, z:0 }, 1000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    obj.isOpen = false;
+                }
+            }
             scene.add(obj);
         });
 
+        loader.load('obj/window_kitchen22.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:0});
+            var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
+            var material2 = new THREE.MeshPhongMaterial({color:0xE5F9FF, metal:true, shininess:25, opacity:0.98, transparent:true, bumpMap:bump, bumpScale:0.05});
+            var material3 = new THREE.MeshPhongMaterial({color:0x444444, metal:true, shininess:0});
 
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material3;
 
-        camera.position.set(100,120,-100);
+            obj.rotation.x = -Math.PI/2;
+
+            bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+            bump.repeat.set(3,4);
+
+            animatedList.push(obj.children[0]);
+            animatedList.push(obj.children[1]);
+            animatedList.push(obj.children[2]);
+            
+            obj.isOpen = false;
+
+            obj.children[0].anim = obj.children[1].anim = obj.children[2].anim = function() {
+                if(!obj.isOpen) {
+                    var tw = new TWEEN.Tween(obj.position)
+                        .to({x:0, y:0, z:-2.5 }, 1000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    obj.isOpen = true;
+                } else {
+                    var tw = new TWEEN.Tween(obj.position)
+                        .to({x:0, y:0, z:0 }, 1000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    obj.isOpen = false;
+                }
+            }
+            scene.add(obj);
+        });
+        // -------------- END WINDOWS ----------- 
+        // -------------- ELEVATOR -------------- 
+        loader.load('obj/elevator_door.obj', function (obj) {
+            var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
+            var material1 = new THREE.MeshPhongMaterial({color:0x990033, bumpMap:bump, bumpScale:0.005, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({color:0x555555, metal:true, shininess:25, opacity:0.7, transparent:true});
+            var material3 = new THREE.MeshPhongMaterial({color:0xAAAAAA, metal:true, shininess:50});
+
+            obj.children[0].material = material1;
+            obj.children[1].material = material2;
+            obj.children[2].material = material3;
+
+            bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+            bump.repeat.set(3,4);
+
+            obj.rotation.x = -Math.PI/2;
+            animatedList.push(obj.children[0]);
+            animatedList.push(obj.children[1]);
+            animatedList.push(obj.children[2]);
+
+            var o3dw1 = new THREE.Object3D();
+            o3dw1.add(obj);
+            
+            var isOpenElev = false;
+
+            obj.children[0].anim = obj.children[1].anim = obj.children[2].anim = function() {
+                var x = 99.276;
+                var y = 2.55;
+                var z = 22.608;
+                if(!isOpenElev && isUpElev) {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dw1.rotation)
+                        .to({x:0, y:Math.PI/2, z:0 }, 1200)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    o3dw1.position.set(x, y, -z);
+                    isOpenElev = true;
+                } else {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dw1.rotation)
+                        .to({x:0, y:0, z:0 }, 1700)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    o3dw1.position.set(x, y, -z);
+                    isOpenElev = false;
+                }
+            }
+            scene.add(o3dw1);
+        });
+
+        loader.load('obj/elevator_box.obj', function (obj) {
+            var material1 = new THREE.MeshPhongMaterial({color:0xAAAAAA, metal:true, shininess:50});
+            var texButtons = THREE.ImageUtils.loadTexture("textures/elevator_buttons.png");
+            var material2 = new THREE.MeshPhongMaterial({map:texButtons, metal:true, shininess:50});
+            var material3 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:200});
+            var texInternal = THREE.ImageUtils.loadTexture("textures/elevator_texture.png");
+            var material4 = new THREE.MeshPhongMaterial({map:texInternal, metal:true, shininess:20});
+            var material5 = new THREE.MeshPhongMaterial({color:0xFFFFE5, metal:true, shininess:50});
+
+            obj.children[0].material = material2; // buttons
+            obj.children[1].material = material1; // cylinder
+            obj.children[2].material = material1; // external
+            obj.children[3].material = material3; // glass
+            obj.children[4].material = material4; // internal
+            obj.children[5].material = material5; // light
+            
+            texInternal.wrapS = texInternal.wrapT = THREE.RepeatWrapping;
+            texInternal.repeat.set(3,4);
+            texButtons.wrapS = texButtons.wrapT = THREE.RepeatWrapping;
+            texButtons.repeat.set(1,1);
+            obj.rotation.x = -Math.PI/2;
+
+            isUpElev = false;
+
+            ele = obj;
+
+            scene.add(obj);
+        });
+
+        function loadElevAutoDoor(objName) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
+                var material2 = new THREE.MeshPhongMaterial({color:0xCCCCCC, bumpMap:bump, bumpScale: 0.01, metal:true, shininess:50});
+                obj.children[0].material = material2;
+                bump.wrapS = bump.wrapT = THREE.RepeatWrapping;
+                bump.repeat.set(3,4);
+                obj.rotation.x = -Math.PI/2;
+                if(objName === "elevator_doorauto1") elevautodoor1 = obj;
+                if(objName === "elevator_doorauto2") elevautodoor2 = obj;
+                scene.add(obj);
+            }); 
+        }
+
+        loadElevAutoDoor("elevator_doorauto1");
+        loadElevAutoDoor("elevator_doorauto2")
+
+        loader.load('obj/elevator_caller.obj', function (obj) {
+            var texButtons = THREE.ImageUtils.loadTexture("textures/elevator_caller.png");
+            var material2 = new THREE.MeshPhongMaterial({map:texButtons, metal:true, shininess:50});
+
+            obj.children[0].material = material2;
+            
+            obj.rotation.x = -Math.PI/2;
+
+            var isElevCalled = false;
+            var pLight1 = new THREE.PointLight(0xFFFFEE, 0, 20);
+            pLight1.position.set(107.806,17.5,-27.5);
+            scene.add(pLight1);
+
+            animatedList.push(obj.children[0]);
+
+            obj.children[0].anim = function() {
+                if(!isElevCalled) {
+                    isElevCalled = true;
+                    twElevAutoDoors2 = new TWEEN.Tween(elevautodoor2.position)
+                        .to({x:0, y:0, z:9.5 }, 2000)
+                        .easing(TWEEN.Easing.Quadratic.Out);
+                    twElevLight = new TWEEN.Tween(pLight1)
+                        .to({intensity:1.2}, 1000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .onComplete(function() {
+                            isUpElev = true;
+                        })
+                        .chain(twElevAutoDoors2);
+                    twElevAutoDoors1 = new TWEEN.Tween(elevautodoor1.position)
+                        .to({x:0, y:0, z:9.5 }, 2000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .chain(twElevLight);
+                    twElev = new TWEEN.Tween(ele.position)
+                        .to({x:0, y:20, z:0 }, 2500)
+                        .easing(TWEEN.Easing.Quadratic.InOut)
+                        .chain(twElevAutoDoors1);
+                    twCaller = new TWEEN.Tween(obj.position)
+                        .to({x:0.05, y:0, z:0 }, 1000)
+                        .easing(TWEEN.Easing.Linear.None)
+                        .chain(twElev)
+                        .start();
+                } else {
+                    isElevCalled = false;
+                }
+            }
+            scene.add(obj);
+        });
+        // -------------- END ELEVATOR -------- 
+        // -------------- LIGHTS -------------- 
+        loader.load('obj/lightallbuttons.obj', function (obj) {
+            var material2 = new THREE.MeshPhongMaterial({color:0xFFDF80, metal:true, shininess:50});
+            obj.children[0].material = material2;
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
+        });
+
+        loader.load('obj/lounge_lb.obj', function (obj) {
+            var material2 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:50});
+            obj.children[0].material = material2;
+            obj.rotation.x = -Math.PI/2;
+
+            animatedList.push(obj.children[0]);
+            
+            var o3dw1 = new THREE.Object3D();
+            o3dw1.add(obj);
+
+            var isLightOn = false;
+            
+            var plh = 32.5/1.5;
+            var pLight1 = new THREE.PointLight(0xFFFFFF, 0, 35);
+            pLight1.position.set(73.7,plh,-89);
+            var pLight2 = pLight1.clone();
+            pLight2.position.set(73.7,plh,-58);
+            var pLight3 = pLight1.clone();
+            pLight3.position.set(107,plh,-50);
+            pLight3.distance = 23;
+            var pLight4 = pLight3.clone();
+            pLight4.position.set(130,plh,-50);
+
+            scene.add(pLight1);
+            scene.add(pLight2);
+            scene.add(pLight3);
+            scene.add(pLight4);
+
+            obj.children[0].anim = function() {
+                var x = 88.674;
+                var y = 11.908;
+                var z = 40.143;
+                if(!isLightOn) {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dw1.rotation)
+                        .to({x:-Math.PI/6.7, y:0, z:0}, 500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    o3dw1.position.set(x, y, -z);
+                    var tw1 = new TWEEN.Tween(pLight1)
+                        .to({intensity:1.5},700)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw2 = new TWEEN.Tween(pLight2)
+                        .to({intensity:1.5},700)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw3 = new TWEEN.Tween(pLight3)
+                        .to({intensity:1.5},700)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw4 = new TWEEN.Tween(pLight4)
+                        .to({intensity:1.5},700)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    isLightOn = true;
+                } else {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dw1.rotation)
+                        .to({x:0, y:0, z:0 }, 500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    o3dw1.position.set(x, y, -z);
+                    var tw1 = new TWEEN.Tween(pLight1)
+                        .to({intensity:0},500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw2 = new TWEEN.Tween(pLight2)
+                        .to({intensity:0},500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw3 = new TWEEN.Tween(pLight3)
+                        .to({intensity:0},500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    var tw4 = new TWEEN.Tween(pLight4)
+                        .to({intensity:0},500)
+                        .easing(TWEEN.Easing.Quartic.InOut)
+                        .start();
+                    isLightOn = false;
+                }
+            }
+            scene.add(o3dw1);
+        });
+
+        function loadLight(objName, posX, posY, posZ, lposX, lposY, lposZ, angleX, angleZ, distance) {
+            loader.load('obj/'+objName+'.obj', function (obj) {
+                var material2 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:50});
+                obj.children[0].material = material2;
+                obj.rotation.x = -Math.PI/2;
+
+                animatedList.push(obj.children[0]);
+                
+                var o3dLights = new THREE.Object3D();
+                o3dLights.add(obj);
+
+                obj.isOn = false;
+                
+                var pLight1 = new THREE.PointLight(0xFFFFFF, 0, distance);
+                pLight1.position.set(lposX,lposY,lposZ);
+
+                scene.add(pLight1);
+
+                obj.children[0].anim = function() {
+                    if(!obj.isOn) {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dLights.rotation)
+                            .to({x:angleX, y:0, z:angleZ}, 500)
+                            .easing(TWEEN.Easing.Quartic.InOut)
+                            .start();
+                        o3dLights.position.set(posX, posY, -posZ);
+                        var tw1 = new TWEEN.Tween(pLight1)
+                            .to({intensity:1.5}, 500)
+                            .easing(TWEEN.Easing.Quartic.InOut)
+                            .start();
+                        obj.isOn = true;
+                    } else {
+                        obj.position.set(-posX, -posY, posZ);
+                        var tw = new TWEEN.Tween(o3dLights.rotation)
+                            .to({x:0, y:0, z:0 }, 500)
+                            .easing(TWEEN.Easing.Quartic.InOut)
+                            .start();
+                        o3dLights.position.set(posX, posY, -posZ);
+                        var tw1 = new TWEEN.Tween(pLight1)
+                            .to({intensity:0},500)
+                            .easing(TWEEN.Easing.Quartic.InOut)
+                            .start();
+                        obj.isOn = false;
+                    }
+                }
+                scene.add(o3dLights);
+            });
+        }
+
+        loadLight("myroom_lb", 110.527, 11.908, 61.646, 112.5, 32.5/1.5, -84, -Math.PI/6.7, 0, 40);
+        loadLight("bedroom_lb", 148.285, 11.908, 61.646, 156, 32.5/1.5, -84, -Math.PI/6.7, 0, 40);
+        loadLight("bathroom_lb", 150.956, 11.908, 56.588, 163.5, 32.5/1.5, -50, 0, -Math.PI/6.7, 30);
+        loadLight("kitchen_lb", 148.91, 11.908, 37.25, 156, 32.5/1.5, -19.3, Math.PI/6.7, 0, 40);
+        loadLight("loft_lb", 55.146, 11.908, 55.777, 37, 32.5/1.5, -75, 0, -Math.PI/6.7, 50);
+        loadLight("outside_lb", 72.59, 11.908, 37.35, 78.814, 32.5/1.5, -19.438, Math.PI/6.7, 0, 40);
+
+        loader.load('obj/dingdong_lb.obj', function (obj) {
+            var material2 = new THREE.MeshPhongMaterial({color:0xFFFFFF, metal:true, shininess:50});
+            obj.children[0].material = material2;
+            obj.rotation.x = -Math.PI/2;
+
+            animatedList.push(obj.children[0]);
+
+            var o3dDingDong = new THREE.Object3D();
+            o3dDingDong.add(obj);
+
+            obj.children[0].anim = function() {
+                var x = 89.467;
+                var y = 12.126;
+                var z = 37.268;
+
+                obj.position.set(-x, -y, z);
+
+                var tw2 = new TWEEN.Tween(o3dDingDong.rotation)
+                    .to({x:0, y:0, z:0}, 500)
+                    .easing(TWEEN.Easing.Sinusoidal.InOut);                  
+                var tw = new TWEEN.Tween(o3dDingDong.rotation)
+                    .to({x:Math.PI/14, y:0, z:0}, 500)
+                    .easing(TWEEN.Easing.Sinusoidal.InOut)
+                    .chain(tw2)
+                    .start();
+                o3dDingDong.position.set(x, y, -z);
+            }
+            scene.add(o3dDingDong);
+        });
+
+        loader.load('obj/signature.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/signature.png");
+            var material1 = new THREE.MeshPhongMaterial({color:0xFFFFFF, map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
+            var material2 = new THREE.MeshPhongMaterial({color:0xFFDF80, metal:true, shininess:300});
+            tex1.anisotropy = anisotropyNumber;
+
+            obj.children[0].material = material2;
+            obj.children[1].material = material1;
+
+            obj.rotation.x = -Math.PI/2;
+            scene.add(obj);
+        });
+        // -------------- END LIGHTS --------- 
+        // --------------- ROOF --------------
+        loader.load('obj/roof.obj', function (obj) {
+            var tex1 = THREE.ImageUtils.loadTexture("textures/wall_white.png");
+            var material1 = new THREE.MeshPhongMaterial({color:0xCCCCCC, map:tex1, bumpMap:tex1, bumpScale:-0.2});
+            var tex2 = THREE.ImageUtils.loadTexture("textures/wall_external.png");
+            var bump2 = THREE.ImageUtils.loadTexture("textures/wall_external-bump.png");
+            var material2 = new THREE.MeshPhongMaterial({map:tex2, bumpMap:bump2, bumpScale:-0.2});
+            tex1.anisotropy = anisotropyNumber;
+            tex2.anisotropy = anisotropyNumber;
+            bump2.anisotropy = anisotropyNumber;
+            bump2.wrapS = bump2.wrapT = THREE.RepeatWrapping;
+            bump2.repeat.set(12,15);
+            tex1.wrapS = tex1.wrapT = THREE.RepeatWrapping;
+            tex1.repeat.set(12,15);
+            tex2.wrapS = tex2.wrapT = THREE.RepeatWrapping;
+            tex2.repeat.set(15,1);
+
+            obj.children[0].material = material2;
+            obj.children[1].material = material1;
+
+            obj.rotation.x = -Math.PI/2;
+
+            animatedList.push(obj.children[0]);
+            animatedList.push(obj.children[1]);
+
+            obj.isOpen = false;
+
+            var o3dRoof = new THREE.Object3D();
+            o3dRoof.add(obj);
+
+            obj.children[0].anim = obj.children[1].anim = function() {
+                var x = 52.54;
+                var y = 32.5;
+                var z = 0;
+                if(!obj.isOpen) {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dRoof.rotation)
+                        .to({x:Math.PI/1.9, y:0, z:0 }, 7000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    o3dRoof.position.set(x, y, -z);
+                    obj.isOpen = true;
+                } else {
+                    obj.position.set(-x, -y, z);
+                    var tw = new TWEEN.Tween(o3dRoof.rotation)
+                        .to({x:0, y:0, z:0 }, 5000)
+                        .easing(TWEEN.Easing.Quadratic.Out)
+                        .start();
+                    o3dRoof.position.set(x, y, -z);
+                    obj.isOpen = false;
+                }
+            }
+            scene.add(o3dRoof);
+        });
+        // --------------- END ROOF ----------
+
+        camera.position.set(200,150,-200);
         camera.up = new THREE.Vector3(0,1,0);
         camera.lookAt(scene.position);
 
         // add the output of the renderer to the html element
         $('body').append(renderer.domElement);
 
-        // call the render function
-        render();
+
+        // function to animate the objects with a mouse click
+        function onDocumentMouseDown(event) {
+            event.preventDefault();
+            var vector = new THREE.Vector3(
+                 (event.clientX/window.innerWidth)*2-1,
+                -(event.clientY/window.innerHeight)*2+1,
+                 (0.5));
+            projector.unprojectVector(vector,camera);
+            var raycaster = new THREE.Raycaster(camera.position,vector.sub(camera.position).normalize());
+            var intersects = raycaster.intersectObjects(animatedList);
+            if (intersects.length > 0) {
+                console.log("Clicked an animated object.");
+                intersects[0].object.anim() && intersects[0].object.anim;
+            }
+        }
+
+        setTimeout(function(){
+            console.log('Waited 2 secs to prevent lights bug.');
+            render();
+        },1200);
 
         function render() {
             stats.update();
             //trackballControls.update();
-            orbitControls.update();
+            //orbitControls.update();
+            TWEEN.update();
             requestAnimationFrame(render);
             renderer.render(scene, camera);
             pointLight.position = camera.position;
