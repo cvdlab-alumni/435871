@@ -84,13 +84,11 @@ function loadElevAutoDoor(objName) {
         bump.repeat.set(3,4);
         obj.rotation.x = -Math.PI/2;
         if(objName === "elevator_doorauto1") elevautodoor1 = obj;
-        if(objName === "elevator_doorauto2") elevautodoor2 = obj;
         scene.add(obj);
     }); 
 }
 
 loadElevAutoDoor("elevator_doorauto1");
-loadElevAutoDoor("elevator_doorauto2")
 
 loader.load('obj/elevator_caller.obj', function (obj) {
     var texButtons = THREE.ImageUtils.loadTexture("textures/elevator_caller.png");
@@ -110,26 +108,26 @@ loader.load('obj/elevator_caller.obj', function (obj) {
     obj.children[0].anim = function() {
         if(!isElevCalled) {
             isElevCalled = true;
-            twElevAutoDoors2 = new TWEEN.Tween(elevautodoor2.position)
-                .to({x:0, y:0, z:9.5 }, 3000)
-                .easing(TWEEN.Easing.Quadratic.Out);
+            twElevAutoDoors1 = new TWEEN.Tween(elevautodoor1.position)
+                .to({x:0, y:20, z:9.5 }, 3000)
+                .easing(TWEEN.Easing.Linear.None)
             twElevLight = new TWEEN.Tween(pLight1)
                 .to({intensity:1.2}, 1000)
-                .easing(TWEEN.Easing.Quadratic.Out)
+                .easing(TWEEN.Easing.Quadratic.InOut)
                 .onComplete(function() {
                     isUpElev = true;
                 })
-                .chain(twElevAutoDoors2);
-            twElevAutoDoors1 = new TWEEN.Tween(elevautodoor1.position)
-                .to({x:0, y:0, z:9.5 }, 2000)
-                .easing(TWEEN.Easing.Quadratic.Out)
-                .chain(twElevLight);
-            twElev = new TWEEN.Tween(ele.position)
-                .to({x:0, y:20, z:0 }, 2500)
-                .easing(TWEEN.Easing.Quadratic.InOut)
                 .chain(twElevAutoDoors1);
+            twElev = new TWEEN.Tween(ele.position)
+                .to({x:0, y:20, z:0 }, 5000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .chain(twElevLight);
+            twElevAutoDoors1a = new TWEEN.Tween(elevautodoor1.position)
+                .to({x:0, y:20, z:0 }, 5000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .start();
             twCaller = new TWEEN.Tween(obj.position)
-                .to({x:0.05, y:0, z:0 }, 1000)
+                .to({x:0.05, y:0, z:0 }, 0)
                 .easing(TWEEN.Easing.Linear.None)
                 .chain(twElev)
                 .start();

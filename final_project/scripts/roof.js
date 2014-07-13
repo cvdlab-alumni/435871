@@ -22,10 +22,10 @@ loader.load('obj/roof.obj', function (obj) {
     animatedList.push(obj.children[0]);
     animatedList.push(obj.children[1]);
 
-    obj.isOpen = false;
-
     var o3dRoof = new THREE.Object3D();
     o3dRoof.add(obj);
+
+    obj.isOpen = false;
 
     obj.children[0].anim = obj.children[1].anim = function() {
         var x = 52.54;
@@ -34,7 +34,7 @@ loader.load('obj/roof.obj', function (obj) {
         if(!obj.isOpen) {
             obj.position.set(-x, -y, z);
             var tw = new TWEEN.Tween(o3dRoof.rotation)
-                .to({x:Math.PI/1.9, y:0, z:0 }, 7000)
+                .to({x:Math.PI/1.9, y:0, z:0 }, 6000)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
             o3dRoof.position.set(x, y, -z);
@@ -42,7 +42,7 @@ loader.load('obj/roof.obj', function (obj) {
         } else {
             obj.position.set(-x, -y, z);
             var tw = new TWEEN.Tween(o3dRoof.rotation)
-                .to({x:0, y:0, z:0 }, 5000)
+                .to({x:0, y:0, z:0 }, 6000)
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
             o3dRoof.position.set(x, y, -z);
