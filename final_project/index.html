@@ -27,6 +27,7 @@
     <script src="libs/MTLLoader.js"></script> 
     <script src="libs/OrbitControls.js"></script>
     <script src="libs/SubdivisionModifier.js"></script>
+    <script src="libs/Mirror.js"></script>
     <script src="libs/PointerLockControls.js"></script>
 
     <!-- Loading my files -->
@@ -41,30 +42,11 @@
     <script src="scripts/lights.js"></script>
     <script src="scripts/dingdong.js"></script>
     <script src="scripts/roof.js"></script>
+    <script src="scripts/furniture.js"></script>
     <script src="scripts/theGUI.js"></script>
     <script>
       // once everything is loaded, we run our Three.js stuff.
       $(function () {
-
-        // function mkCube(sizeX, sizeY, sizeZ, color) {
-        //     var cubeGeometry = new THREE.BoxGeometry(sizeX,sizeY,sizeZ);
-        //     var cubeMaterial = new THREE.MeshLambertMaterial({color: color})
-        //     var cube = new THREE.Mesh(cubeGeometry,cubeMaterial);
-        //     return cube;
-        // }
-        
-        // function mkSmoothBox(sizeX, sizeY, sizeZ, subdiv, texName) {
-        //     var modifier = new THREE.SubdivisionModifier(subdiv);
-        //     var cubeGeometry = new THREE.BoxGeometry(sizeX, sizeY, sizeZ, 3, 3, 3);
-        //     modifier.modify(cubeGeometry);
-        //     var tex = THREE.ImageUtils.loadTexture("textures/"+texName+".png");
-        //     var cubeMaterial = new THREE.MeshLambertMaterial({color: 0xFF0000, map: tex})
-        //     var cube = new THREE.Mesh(cubeGeometry,cubeMaterial);
-        //     cubeGeometry.mergeVertices();
-        //     cubeGeometry.computeFaceNormals();
-        //     cubeGeometry.computeVertexNormals();
-        //     return cube;
-        // }
 
         // add the output of the renderer to the html element
         $('body').append(renderer.domElement);

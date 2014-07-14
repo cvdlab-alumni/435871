@@ -27,6 +27,24 @@ function myOBJloader(objName, texName, texBumpName, bumpScale, shine, repX, repZ
     });
 }
 
+function myOBJMTLloader(objName, scaleX, scaleY, scaleZ, posX, posY, posZ, rotation) {
+    o3d = new THREE.Object3D();
+    var loader2 = new THREE.OBJMTLLoader();
+    loader2.addEventListener('load', function (event) {
+        var object = event.content;
+        object.scale.set(scaleX, scaleY, scaleZ);
+        object.position.set(posX, posY, posZ);
+        object.rotateY(rotation);
+        o3d.add(object);
+        scene.add(o3d);
+    });
+    loader2.load(
+        '../objmtl/'+objName+'.obj', 
+        '../objmtl/'+objName+'.mtl', 
+        {side: THREE.DoubleSide}
+    );
+}
+
 function onDocumentMouseDown(event) {
     event.preventDefault();
     if(document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element) {
@@ -66,5 +84,9 @@ function render() {
     renderer.render(scene, camera);
     TWEEN.update();
     stats.update();
+    orbitControls.update();
+    pointLight.position = camera.position;
+    o3dMirr.elevMirror.render();
+
     if(PLCenabled) { renderPLC(); }
 }

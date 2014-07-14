@@ -75,6 +75,18 @@ loader.load('obj/elevator_box.obj', function (obj) {
     scene.add(obj);
 });
 
+// Mirror into the elevator
+var elevMirror = new THREE.Mirror( renderer, camera, {
+    clipBias: 0.003, textureWidth: WIDTH, textureHeight: HEIGHT, color:0x889999 } );
+elevMirrorMesh = new THREE.Mesh( new THREE.PlaneGeometry( 11, 11 ), elevMirror.material );
+elevMirrorMesh.add(elevMirror);
+elevMirrorMesh.position.set(113.8,-4.4,-27.5);
+elevMirrorMesh.rotateY(-Math.PI/2);
+var o3dMirr = new THREE.Object3D();
+o3dMirr.elevMirror = elevMirror;
+o3dMirr.add(elevMirrorMesh);
+
+
 function loadElevAutoDoor(objName) {
     loader.load('obj/'+objName+'.obj', function (obj) {
         var bump = THREE.ImageUtils.loadTexture("textures/glass-bump.png");
@@ -122,6 +134,10 @@ loader.load('obj/elevator_caller.obj', function (obj) {
                 .to({x:0, y:20, z:0 }, 5000)
                 .easing(TWEEN.Easing.Quadratic.InOut)
                 .chain(twElevLight);
+            twElevMirror1 = new TWEEN.Tween(o3dMirr.position)
+                .to({x:0, y:20, z:0 }, 5000)
+                .easing(TWEEN.Easing.Quadratic.InOut)
+                .start();
             twElevAutoDoors1a = new TWEEN.Tween(elevautodoor1.position)
                 .to({x:0, y:20, z:0 }, 5000)
                 .easing(TWEEN.Easing.Quadratic.InOut)
@@ -136,4 +152,5 @@ loader.load('obj/elevator_caller.obj', function (obj) {
         }
     }
     scene.add(obj);
+    scene.add(o3dMirr);
 });

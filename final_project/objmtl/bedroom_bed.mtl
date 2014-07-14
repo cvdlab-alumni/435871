@@ -1,0 +1,49 @@
+# Blender MTL File: 'bed.blend'
+# Material Count: 5
+
+newmtl bed_venge
+Ns 20
+Ka 0.000000 0.000000 0.000000
+Kd 0.9 0.9 0.9
+Ks 0.2 0.2 0.2
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd bedroom_bed1.jpg
+
+newmtl coverlet
+Ns 10
+Ka 0.000000 0.000000 0.000000
+Kd 0.0 0.25 0.5
+Ks 0.1 0.1 0.1
+Ni 1.000000
+d 1.0
+illum 2
+map_Kd bedroom_bed.jpg
+
+newmtl mattress
+Ns 10
+Ka 0.000000 0.000000 0.000000
+Kd 1.0 1.0 1.0
+Ks 0.1 0.1 0.1
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl leftPillow
+Ns 10
+Ka 0.000000 0.000000 0.000000
+Kd 0.0 0.25 0.5
+Ks 0.1 0.1 0.1
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl rightPillow
+Ns 10
+Ka 0.000000 0.000000 0.000000
+Kd 0.0 0.25 0.5
+Ks 0.1 0.1 0.1
+Ni 1.000000
+d 1.000000
+illum 2

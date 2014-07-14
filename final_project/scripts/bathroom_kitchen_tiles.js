@@ -35,14 +35,14 @@ function loadBathroomTile(objName, rep1, rep2) {
 	    bump2.repeat.set(rep1,4);
 	    bump3.repeat.set(rep2,0.45);
 	    bump4.repeat.set(rep1,2);
-	    bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
+	    //bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
 
 	    tex1.wrapS = tex1.wrapT = tex2.wrapS = tex2.wrapT = tex3.wrapS = tex3.wrapT = tex4.wrapS = tex4.wrapT = THREE.RepeatWrapping;
 	    tex1.repeat.set(rep1,2);
 	    tex2.repeat.set(rep1,4);
 	    tex3.repeat.set(rep2,0.45);
 	    tex4.repeat.set(rep1,2);
-	    tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
+	    //tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
 
 	    obj.rotation.x = -Math.PI/2;
 	    scene.add(obj);

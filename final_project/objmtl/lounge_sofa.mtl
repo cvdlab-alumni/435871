@@ -1,0 +1,43 @@
+# Blender3D MTL File: burlap_sofa_sweethome3d.blend
+# Material Count: 4
+newmtl blackplastic
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.170351 0.170351 0.170351
+Ks 1.094016 1.094016 1.094016
+Ni 1.000000
+d 1.000000
+illum 2
+
+
+newmtl light_beige_bump_sofa_sh3d.jpg
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 1.000000 1.000000 1.000000
+Ks 0.080000 0.080000 0.080000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd lounge_sofa.jpg
+
+
+newmtl cosins
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.400000 0.000000 0.050000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+
+
+newmtl cosins_brown
+Ns 96.078431
+Ka 0.000000 0.000000 0.000000
+Kd 0.400000 0.000000 0.050000
+Ks 0.000000 0.000000 0.000000
+Ni 1.000000
+d 1.000000
+illum 1
+
+

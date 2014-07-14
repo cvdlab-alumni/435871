@@ -1,11 +1,11 @@
 // FLOORS
-myOBJloader("loft_floor", "loft_floor3", "loft_floor3", -0.2, 10, 3,4);
+myOBJloader("loft_floor", "loft_floor3", "loft_floor3", -0.2, 10, 4,6);
 myOBJloader("lounge_floor", "floor_marble1", false, 0, 100, 2,3);
 myOBJloader("corridor_floor", "floor_marble1", false, 0, 100, 5.2,1.5);
-myOBJloader("myroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 1,2);
-myOBJloader("bedroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 1,2);
+myOBJloader("myroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 2,3);
+myOBJloader("bedroom_floor", "parquet_orange", "parquet_orange", -0.05, 50, 2,3);
 myOBJloader("bathroom_floor", "bathroom_floor", "bathroom_floor-bump", 0.15, 200, 8,6);
-myOBJloader("kitchen_floor", "kitchen_floor", "kitchen_floor-bump", 0.1, 100, 8,8);
+myOBJloader("kitchen_floor", "kitchen_floor", "kitchen_floor-bump", 0.1, 100, 10,10);
 myOBJloader("outside_floor", "floor_marble2", false, 0, 150, 2,2);
 
 // WALLS

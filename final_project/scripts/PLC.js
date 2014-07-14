@@ -2,6 +2,7 @@ var crosshair = document.getElementById( 'crosshair' );
 var blocker = document.getElementById( 'blocker' );
 var instructions = document.getElementById( 'instructions' );
 var stature = 17.7 // 177cm
+var controls;
 
 var havePointerLock = 'pointerLockElement' in document || 'mozPointerLockElement' in document || 'webkitPointerLockElement' in document;
 
@@ -9,11 +10,12 @@ if ( havePointerLock ) {
     var element = document.body;
     var pointerlockchange = function ( event ) {
         if ( document.pointerLockElement === element || document.mozPointerLockElement === element || document.webkitPointerLockElement === element ) {
-            controls.enabled = true;
-            PLCenabled = true;
+            orbitControls.reset();
             camera.position.set(0,0,0);
             camera.up = new THREE.Vector3(0,1,0);
-            controls.getObject().position.set(75,stature,-20);
+            controls.enabled = true;
+            PLCenabled = true;
+            controls.getObject().position.set(75,stature,-20);            
             blocker.style.display = 'none';
             crosshair.style.display = 'inline';
             dat.GUI.toggleHide();
@@ -44,8 +46,8 @@ if ( havePointerLock ) {
     document.addEventListener( 'webkitpointerlockerror', pointerlockerror, false );
 
     var enablePLC = function() {
-        instructions.style.display = 'none';
-        controls = new THREE.PointerLockControls( camera );
+        // instructions.style.display = 'none';
+        controls = new THREE.PointerLockControls(camera);
         scene.add(controls.getObject());
         // Ask the browser to lock the pointer
         element.requestPointerLock = element.requestPointerLock || element.mozRequestPointerLock || element.webkitRequestPointerLock;
