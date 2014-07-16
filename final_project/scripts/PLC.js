@@ -66,9 +66,19 @@ if ( havePointerLock ) {
         } else {
             element.requestPointerLock();
         }
+
     };
 
+
     function renderPLC() {
+        if(guiControls.reflex) {
+            scene.add(o3dreflex);
+            o3dreflex.position.set(controls.getObject().position.x,
+                                  controls.getObject().position.y+1.5,
+                                  controls.getObject().position.z);
+            o3dreflex.lookAt(new THREE.Vector3(controls.getObject().position.x+10,17,controls.getObject().position.z));
+        }
+        
         pointLight.position = controls.getObject().position;
         controls.isOnObject( false );
         ray.ray.origin.copy( controls.getObject().position );

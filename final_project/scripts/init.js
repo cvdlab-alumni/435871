@@ -17,7 +17,7 @@ var axisHelper = new THREE.AxisHelper(50);
 scene.add(axisHelper);
 
 // pointlight positioned on camera
-var pointLight = new THREE.PointLight(0xffffff, 1);
+var pointLight = new THREE.PointLight(0xffffff, 0.9);
 pointLight.position = camera.position;
 scene.add(pointLight);
 
@@ -47,6 +47,7 @@ camera.lookAt(scene.position);
 var orbitControls = new THREE.OrbitControls(camera);
 scene.add(camera);
 
+var reflex = false;
 var PLCenabled = false;
 var objects = [];
 var ray = new THREE.Raycaster();

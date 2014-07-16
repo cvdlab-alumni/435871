@@ -1,0 +1,61 @@
+# Blender MTL File: 'None'
+# Material Count: 12
+
+newmtl trunk1
+Ns 1.960784
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.520000 0.552000
+Ks 0.100000 0.100000 0.100000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd loft_yucca_trunk.jpg
+
+newmtl trunk2
+Ns 1.960784
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.100000 0.100000 0.100000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd loft_yucca_trunk.jpg
+
+newmtl grass1
+Ns 17.647059
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd loft_yucca_grass.jpg
+
+newmtl wood
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.512000 0.512000
+Ks 0.100000 0.100000 0.100000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd loft_yucca_wood.jpg
+
+newmtl wood2
+Ns 0.000000
+Ka 0.000000 0.000000 0.000000
+Kd 0.25 0.1 0.0
+Ks 0.100000 0.100000 0.100000
+Ni 1.000000
+d 1.000000
+illum 2
+
+newmtl grass2
+Ns 17.647059
+Ka 0.000000 0.000000 0.000000
+Kd 0.512000 0.720000 0.512000
+Ks 0.500000 0.500000 0.500000
+Ni 1.000000
+d 1.000000
+illum 2
+map_Kd loft_yucca_grass.jpg

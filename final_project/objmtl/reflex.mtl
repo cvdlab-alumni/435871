@@ -1,0 +1,21 @@
+# Max2Mtl Version 4.0 Mar 10th, 2001
+#
+newmtl camera
+Ka  0.3 0.3 0.3
+Kd  1.0 1.0 1.0
+Ks  0.2 0.2 0.2
+d  1.0
+Ns  0.0
+illum 2
+map_Kd reflex_camera.jpg
+#
+newmtl objective
+Ka  0.0 0.0 0.0
+Kd  1.0 1.0 1.0
+Ks  0.2 0.2 0.2
+d  1.0
+Ns  0.0
+illum 2
+map_Kd reflex_objective.jpg
+#
+# EOF

@@ -52,7 +52,7 @@
         $('body').append(renderer.domElement);
 
         // setTimeout to prevent some lights bug
-        var counter = 2;
+        var counter = 3;
         var elem = document.getElementById('loading');
         var id = setInterval(function() {
             counter--;
@@ -62,11 +62,26 @@
             }
         }, 1000);
 
-        var timeout = 2000;
-        setTimeout(function(){
+        var timeout = (counter-1)*1000;
+        setTimeout(function() {
             console.log('Waited '+timeout/1000+' secs to prevent lights bug.');
             render();
         },timeout);
+
+
+        /* TODO LIST
+        - giorno notte, skybox
+        - arredamento vario
+        - souni: porte, finestre, campanello, interruttori luce, doccia
+        - video: tv
+        - anim: macchinetta del caffe con caffe
+        - anim: doccia
+        - anim: giradischi
+        - anim: toast
+        - altra camera fissa che guarda la tv
+        - specchio bagno (FATTO)
+        - telecamera sulla camera
+        */
 
       });
     </script>  

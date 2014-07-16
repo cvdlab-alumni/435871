@@ -78,7 +78,7 @@ loader.load('obj/elevator_box.obj', function (obj) {
 // Mirror into the elevator
 var elevMirror = new THREE.Mirror( renderer, camera, {
     clipBias: 0.003, textureWidth: WIDTH, textureHeight: HEIGHT, color:0x889999 } );
-elevMirrorMesh = new THREE.Mesh( new THREE.PlaneGeometry( 11, 11 ), elevMirror.material );
+var elevMirrorMesh = new THREE.Mesh( new THREE.PlaneGeometry( 11, 11 ), elevMirror.material );
 elevMirrorMesh.add(elevMirror);
 elevMirrorMesh.position.set(113.8,-4.4,-27.5);
 elevMirrorMesh.rotateY(-Math.PI/2);
@@ -152,5 +152,4 @@ loader.load('obj/elevator_caller.obj', function (obj) {
         }
     }
     scene.add(obj);
-    scene.add(o3dMirr);
 });
