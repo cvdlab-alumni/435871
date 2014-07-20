@@ -2,6 +2,9 @@
 ##Computational Graphics Project
 This repository contains the final project for the Computational Graphics exam of Roma Tre University (Italy), master degree course. The project goal was to create a good looking representation of our own apartment, including also some cool animations.
 
+###Run the project
+[Show me!](http://davideviolante.github.io/)
+
 ###Tools used
 * [Three.js](http://www.threejs.org)
 * jQuery.js
