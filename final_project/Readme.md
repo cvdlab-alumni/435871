@@ -47,22 +47,32 @@ _____________________
 
 ___________________
 
-###Project file organization
-* PLC.js: includes all the features of the Pointer Lock Controls (first person camera)
-* functions.js: most important parametric functions called from other files
-* init.js: initialization of the most common variables and parameters
-* lights.js: lights switch button models and light effect
-* lensflare.js: lensflare effect functions
-* particles.js: particles for shower effect animation
-* skybox.js: skybox effect functions
-* roof.js: roof model and animation
-* vinyl_player.js: vinyl player model and animation
-* video_sounds.js: tv video effect and all sound effects (doors, windows, etc)
-* furniture.js: all furniture objects are loaded here
-* floor_walls.js: floors and walls models
-* doors.js: doors models and animation
-* windows.js: windows models and animation
-* elevator.js: elevator model and animation
-* dingdong.js: door bell model and animation including apartment owner surname
-* bathroom_kitchen_tiles.js: only bathroom and kitchen wall tiles
-* theGUi.js: interactive GUI where some parameters can be changed
+###Project file and folders organization
+* **images**: some cool images of the project
+* **libs**: javascript libraries used
+* **obj**: OBJ models
+* **objmtl**: OBJ models with a MTL
+* **scripts**:
+   * PLC.js: includes all the features of the Pointer Lock Controls (first person camera)
+   * functions.js: most important parametric functions called from other files
+   * init.js: initialization of the most common variables and parameters
+   * lights.js: lights switch button models and light effect
+   * lensflare.js: lensflare effect functions
+   * particles.js: particles for shower effect animation
+   * skybox.js: skybox effect functions
+   * roof.js: roof model and animation
+   * vinyl_player.js: vinyl player model and animation
+   * video_sounds.js: tv video effect and all sound effects (doors, windows, etc)
+   * furniture.js: all furniture objects are loaded here
+   * floor_walls.js: floors and walls models
+   * doors.js: doors models and animation
+   * windows.js: windows models and animation
+   * elevator.js: elevator model and animation
+   * dingdong.js: door bell model and animation including apartment owner surname
+   * bathroom_kitchen_tiles.js: only bathroom and kitchen wall tiles
+   * theGUi.js: interactive GUI where some parameters can be changed
+* **sounds**: sounds used for animations
+* **textures**: textures used for models
+* **videos**: video used for TV animation
+* Readme.md: this file
+* **index.html**: main file to run the project
