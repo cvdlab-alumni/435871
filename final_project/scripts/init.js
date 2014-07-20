@@ -2,36 +2,28 @@
 var stats = initStats();
 var scene = new THREE.Scene();
 var fov = 55;
-var camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 5000);
+var camera = new THREE.PerspectiveCamera(fov, window.innerWidth / window.innerHeight, 0.1, 7000);
 
 var WIDTH = window.innerWidth;
 var HEIGHT = window.innerHeight
-var renderer = new THREE.WebGLRenderer({antialias:true});
-renderer.setClearColor(new THREE.Color(0x33ADFF, 1.0)); // 0x33ADFF skycolor
+var renderer = new THREE.WebGLRenderer({antialias:true, alpha:true});
+renderer.setClearColor(new THREE.Color(0xFFFFFF, 1.0)); // 0x33ADFF skycolor
 renderer.setSize(WIDTH, HEIGHT);
 
 // list of the objects with an animation
 var animatedList = [];
+var soundList = [];
 
 var axisHelper = new THREE.AxisHelper(50);
-scene.add(axisHelper);
 
 // pointlight positioned on camera
 var pointLight = new THREE.PointLight(0xffffff, 0.9);
 pointLight.position = camera.position;
 scene.add(pointLight);
 
-// hemisphere light
-var hemi = new THREE.HemisphereLight(0xFFDD99, 0xffffff, 0.5);
-//scene.add(hemi);
-
-// directional light
-var dir = new THREE.DirectionalLight(0xffffff, 0.7);
-dir.position.set(200,150,-200);;
-//scene.add(dir);
-
 // loader to load all OBJ files
 var loader = new THREE.OBJLoader();
+var loader2 = new THREE.OBJMTLLoader();
 
 // max anisotropy for best texture result
 //var anisotropyNumber = renderer.getMaxAnisotropy()/2;
@@ -39,9 +31,8 @@ var anisotropyNumber = 1;
 
 var projector = new THREE.Projector();
 
-camera.position.set(200,150,-200);
+camera.position.set(250,105,130);
 camera.up = new THREE.Vector3(0,1,0);
-camera.lookAt(scene.position);
 
 // Orbit controls
 var orbitControls = new THREE.OrbitControls(camera);
@@ -67,3 +58,9 @@ loader.load('obj/master.obj', function (obj) {
     obj.rotation.x = -Math.PI/2;
     scene.add(obj);
 });
+
+// Whole simplified building
+var gBuilding = new THREE.BoxGeometry(178.2,200,109.2, 1, 1, 1);
+var mBuilding = new THREE.MeshPhongMaterial({color:0xE7BC84});
+var simpleBuilding = new THREE.Mesh(gBuilding, mBuilding);
+simpleBuilding.position.set(89,-100,-54.5);

@@ -32,6 +32,10 @@ function loadDoor(objName, posX, posY, posZ, angle) {
                     .easing(TWEEN.Easing.Quadratic.Out)
                     .start();
                 o3dDoors.position.set(posX, posY, -posZ);
+
+                soundDoorOpen.position.set(posX, posY, -posZ);
+                soundDoorOpen.play();
+
                 obj.isOpen = true;
             } else {
                 obj.position.set(-posX, -posY, posZ);
@@ -40,6 +44,10 @@ function loadDoor(objName, posX, posY, posZ, angle) {
                     .easing(TWEEN.Easing.Quadratic.Out)
                     .start();
                 o3dDoors.position.set(posX, posY, -posZ);
+                setTimeout(function() {
+                    soundDoorClose.position.set(posX ,posY, -posZ);
+                    soundDoorClose.play();
+                },1000);
                 obj.isOpen = false;
             }
         }
@@ -84,8 +92,11 @@ loader.load('obj/door_entrance.obj', function (obj) {
             var tw = new TWEEN.Tween(o3dDoors.rotation)
                 .to({x:0, y:Math.PI/2, z:0 }, 2000)
                 .easing(TWEEN.Easing.Quadratic.Out)
+                .delay(1200)
                 .start();
             o3dDoors.position.set(x, y, -z);
+            soundDoorEntOpen.position.set(x, y, -z);
+            soundDoorEntOpen.play();
             obj.isOpen = true;
         } else {
             obj.position.set(-x, -y, z);
@@ -94,6 +105,10 @@ loader.load('obj/door_entrance.obj', function (obj) {
                 .easing(TWEEN.Easing.Quadratic.Out)
                 .start();
             o3dDoors.position.set(x, y, -z);
+            setTimeout(function() {
+                soundDoorEntClose.position.set(x, y, -z);
+                soundDoorEntClose.play();
+            },1500);
             obj.isOpen = false;
         }
     }

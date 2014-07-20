@@ -60,6 +60,8 @@ loader.load('obj/lounge_lb.obj', function (obj) {
                 .to({intensity:1.5},700)
                 .easing(TWEEN.Easing.Quartic.InOut)
                 .start();
+            soundLightOn.position.set(x, y, -z);
+            soundLightOn.play();
             isLightOn = true;
         } else {
             obj.position.set(-x, -y, z);
@@ -84,6 +86,8 @@ loader.load('obj/lounge_lb.obj', function (obj) {
                 .to({intensity:0},500)
                 .easing(TWEEN.Easing.Quartic.InOut)
                 .start();
+            soundLightOff.position.set(x, y, -z);
+            soundLightOff.play();
             isLightOn = false;
         }
     }
@@ -120,6 +124,8 @@ function loadLight(objName, posX, posY, posZ, lposX, lposY, lposZ, angleX, angle
                     .to({intensity:1.5}, 500)
                     .easing(TWEEN.Easing.Quartic.InOut)
                     .start();
+                soundLightOn.position.set(posX ,posY, -posZ);
+                soundLightOn.play();
                 obj.isOn = true;
             } else {
                 obj.position.set(-posX, -posY, posZ);
@@ -132,6 +138,8 @@ function loadLight(objName, posX, posY, posZ, lposX, lposY, lposZ, angleX, angle
                     .to({intensity:0},500)
                     .easing(TWEEN.Easing.Quartic.InOut)
                     .start();
+                soundLightOff.position.set(posX ,posY, -posZ);
+                soundLightOff.play();
                 obj.isOn = false;
             }
         }

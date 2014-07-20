@@ -5,7 +5,7 @@
       <link href="style.css" rel="stylesheet" type="text/css">
   </head>
   <body>
-    <div id="loading">Loading... please wait :) <img width="75" src="loading.gif" /></div>
+    <div id="loading">Loading objects... please wait! <img width="75" src="loading.gif" /></div>
     <div id="crosshair"></div>
     <div id="blocker">
       <div id="instructions">
@@ -15,6 +15,12 @@
         MOUSE = Look around
       </div>
     </div>
+
+    <div id="start">
+        <a class="button" href="#" onclick="render()">Show Project!</a>
+    </div>
+
+    <video id="video" style="display:none" src="videos/blade_runner.ogg"></video>
 
     <!-- Loading the libraries -->
     <script src="libs/jquery.min.js"></script> 
@@ -26,7 +32,6 @@
     <script src="libs/OBJMTLLoader.js"></script> 
     <script src="libs/MTLLoader.js"></script> 
     <script src="libs/OrbitControls.js"></script>
-    <script src="libs/SubdivisionModifier.js"></script>
     <script src="libs/Mirror.js"></script>
     <script src="libs/PointerLockControls.js"></script>
 
@@ -34,15 +39,20 @@
     <script src="scripts/PLC.js"></script>
     <script src="scripts/functions.js"></script>
     <script src="scripts/init.js"></script>
-    <script src="scripts/floors_and_walls.js"></script>
-    <script src="scripts/bathroom_kitchen_tiles.js"></script>
+    <script src="scripts/lights.js"></script>
+    <script src="scripts/lensflare.js"></script>
+    <script src="scripts/particles.js"></script>
+    <script src="scripts/skybox.js"></script>
+    <script src="scripts/roof.js"></script>
+    <script src="scripts/vinyl_player.js"></script>
+    <script src="scripts/video_sounds.js"></script>
+    <script src="scripts/furniture.js"></script>
+    <script src="scripts/floors_walls.js"></script>
     <script src="scripts/doors.js"></script>
     <script src="scripts/windows.js"></script>
     <script src="scripts/elevator.js"></script>
-    <script src="scripts/lights.js"></script>
     <script src="scripts/dingdong.js"></script>
-    <script src="scripts/roof.js"></script>
-    <script src="scripts/furniture.js"></script>
+    <script src="scripts/bathroom_kitchen_tiles.js"></script>
     <script src="scripts/theGUI.js"></script>
     <script>
       // once everything is loaded, we run our Three.js stuff.
@@ -52,36 +62,24 @@
         $('body').append(renderer.domElement);
 
         // setTimeout to prevent some lights bug
-        var counter = 3;
+        var counter = 7;
         var elem = document.getElementById('loading');
+        var elem2 = document.getElementById('start');
         var id = setInterval(function() {
             counter--;
             if(counter < 0) {
                 elem.style.display = 'none';
+                elem2.style.display = 'inline';
                 clearInterval(id);
             }
         }, 1000);
 
-        var timeout = (counter-1)*1000;
-        setTimeout(function() {
-            console.log('Waited '+timeout/1000+' secs to prevent lights bug.');
-            render();
-        },timeout);
+        // var timeout = (counter-2)*1000;
+        // setTimeout(function() {
+        //     console.log('Waited '+timeout/1000+' secs to prevent lights bug.');
+        //     render();
+        // },timeout);
 
-
-        /* TODO LIST
-        - giorno notte, skybox
-        - arredamento vario
-        - souni: porte, finestre, campanello, interruttori luce, doccia
-        - video: tv
-        - anim: macchinetta del caffe con caffe
-        - anim: doccia
-        - anim: giradischi
-        - anim: toast
-        - altra camera fissa che guarda la tv
-        - specchio bagno (FATTO)
-        - telecamera sulla camera
-        */
 
       });
     </script>  

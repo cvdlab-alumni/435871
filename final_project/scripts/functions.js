@@ -1,11 +1,12 @@
 function myOBJloader(objName, texName, texBumpName, bumpScale, shine, repX, repZ) {
-    loader.load('../obj/'+objName+'.obj', function (obj) {
+    loader.load('obj/'+objName+'.obj', function (obj) {
         var tex = THREE.ImageUtils.loadTexture("../textures/"+texName+".png");
         var material = new THREE.MeshPhongMaterial({
                                                     map:tex,
-                                                    side:THREE.DoubleSide,
                                                     metal:true,
-                                                    shininess:shine});
+                                                    shininess:shine,
+                                                    side: THREE.DoubleSide
+                                                });
         if (texBumpName) {
             var bump = THREE.ImageUtils.loadTexture("../textures/"+texBumpName+".png");
             material.bumpMap = bump;
@@ -28,8 +29,8 @@ function myOBJloader(objName, texName, texBumpName, bumpScale, shine, repX, repZ
 }
 
 function myOBJMTLloader(objName, scaleX, scaleY, scaleZ, posX, posY, posZ, rotX, rotY, rotZ) {
-    o3d = new THREE.Object3D();
     var loader2 = new THREE.OBJMTLLoader();
+    var o3d = new THREE.Object3D();
     loader2.addEventListener('load', function (event) {
         var object = event.content;
         object.scale.set(scaleX, scaleY, scaleZ);
@@ -39,10 +40,37 @@ function myOBJMTLloader(objName, scaleX, scaleY, scaleZ, posX, posY, posZ, rotX,
         scene.add(o3d);
     });
     loader2.load(
-        '../objmtl/'+objName+'.obj', 
-        '../objmtl/'+objName+'.mtl', 
+        'objmtl/'+objName+'.obj', 
+        'objmtl/'+objName+'.mtl', 
         {side: THREE.DoubleSide}
     );
+}
+
+var Sound = function ( sources, radius, volume ) {
+    var audio = document.createElement( 'audio' );
+    for ( var i = 0; i < sources.length; i++ ) {
+        var source = document.createElement( 'source' );
+        source.src = sources[ i ];
+        audio.appendChild( source );
+    }
+    this.position = new THREE.Vector3();
+    this.play = function () {
+        audio.play();
+    }
+    this.pause = function() {
+        audio.pause();
+    }
+    this.loop = function() {
+        audio.setAttribute("loop", "true");
+    }
+    this.update = function ( camera ) {
+        var distance = this.position.distanceTo(PLCenabled ? controls.getObject().position : camera.position);
+        if ( distance <= radius ) {
+            audio.volume = volume * ( 1 - distance / radius );
+        } else {
+            audio.volume = 0;
+        }
+    }
 }
 
 function onDocumentMouseDown(event) {
@@ -79,6 +107,7 @@ function initStats() {
     return stats;
 }
 
+var rendered = false;
 function render() {
     requestAnimationFrame(render);
     renderer.render(scene, camera);
@@ -93,4 +122,23 @@ function render() {
         o3dMirr.elevMirror.render();
         o3dMirr2.bathMirror.render();
     }
+
+    soundList.forEach(function(val) {
+        val.update(camera);
+    });
+
+    if (videotv.readyState === videotv.HAVE_ENOUGH_DATA) {
+        imageContext.drawImage(video,0,0);
+        if(videoTexture)
+            videoTexture.needsUpdate = true;
+        videotv.updateVol();
+    }
+
+    if(document.getElementById('start').style.display === 'inline')
+        document.getElementById('start').style.display = 'none';
+
+    particleList.forEach(function(val) {
+        val.update();
+    })
+
 }

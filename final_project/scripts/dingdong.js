@@ -14,6 +14,8 @@ loader.load('obj/dingdong_lb.obj', function (obj) {
         var z = 37.268;
 
         obj.position.set(-x, -y, z);
+        soundDoorBell.position.set(x , y, -z);
+        soundDoorBell.play();
 
         var tw2 = new TWEEN.Tween(o3dDingDong.rotation)
             .to({x:0, y:0, z:0}, 500)

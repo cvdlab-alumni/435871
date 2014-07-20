@@ -35,13 +35,15 @@ loader.load('obj/roof.obj', function (obj) {
         var y = 32.5;
         var z = 0;
         if(!obj.isOpen) {
-            obj.position.set(-x, -y, z);
-            var tw = new TWEEN.Tween(o3dRoof.rotation)
-                .to({x:Math.PI/1.9, y:0, z:0 }, 6000)
-                .easing(TWEEN.Easing.Quadratic.Out)
-                .start();
-            o3dRoof.position.set(x, y, -z);
-            obj.isOpen = true;
+            if(!PLCenabled) {
+                obj.position.set(-x, -y, z);
+                var tw = new TWEEN.Tween(o3dRoof.rotation)
+                    .to({x:Math.PI/1.9, y:0, z:0 }, 6000)
+                    .easing(TWEEN.Easing.Quadratic.Out)
+                    .start();
+                o3dRoof.position.set(x, y, -z);
+                obj.isOpen = true;
+            }
         } else {
             obj.position.set(-x, -y, z);
             var tw = new TWEEN.Tween(o3dRoof.rotation)

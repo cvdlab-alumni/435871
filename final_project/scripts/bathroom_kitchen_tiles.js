@@ -6,10 +6,10 @@ function loadBathroomTile(objName, rep1, rep2) {
 	    var tex3 = THREE.ImageUtils.loadTexture("textures/bathroom_tile.png");
 	    var tex4 = THREE.ImageUtils.loadTexture("textures/bathroom_tile_white.png");
 	    
-	    var material1 = new THREE.MeshPhongMaterial({map:tex1, side:THREE.DoubleSide, metal:true, shininess:50});
-	    var material2 = new THREE.MeshPhongMaterial({map:tex2, side:THREE.DoubleSide, metal:true, shininess:50});
-	    var material3 = new THREE.MeshPhongMaterial({map:tex3, side:THREE.DoubleSide, metal:true, shininess:50});
-	    var material4 = new THREE.MeshPhongMaterial({map:tex4, side:THREE.DoubleSide, metal:true, shininess:50});
+	    var material1 = new THREE.MeshPhongMaterial({map:tex1});
+	    var material2 = new THREE.MeshPhongMaterial({map:tex2});
+	    var material3 = new THREE.MeshPhongMaterial({map:tex3});
+	    var material4 = new THREE.MeshPhongMaterial({map:tex4});
 	    
 	    obj.children[0].material = material1;
 	    obj.children[1].material = material2;
@@ -30,19 +30,19 @@ function loadBathroomTile(objName, rep1, rep2) {
 	    material3.bumpScale = 0.05;
 	    material4.bumpScale = 0.1;
 
-	    bump1.wrapS = bump1.wrapT = bump2.wrapS = bump2.wrapT = bump3.wrapS = bump3.wrapT = bump4.wrapS = bump4.wrapT= THREE.RepeatWrapping;
+	    bump1.wrapS = bump1.wrapT = bump2.wrapS = bump2.wrapT = bump3.wrapS = bump3.wrapT = bump4.wrapS = bump4.wrapT = THREE.RepeatWrapping;
 	    bump1.repeat.set(rep1,2);
 	    bump2.repeat.set(rep1,4);
 	    bump3.repeat.set(rep2,0.45);
 	    bump4.repeat.set(rep1,2);
-	    //bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
+	    bump1.anisotropy = bump2.anisotropy = bump3.anisotropy = bump4.anisotropy = anisotropyNumber;
 
 	    tex1.wrapS = tex1.wrapT = tex2.wrapS = tex2.wrapT = tex3.wrapS = tex3.wrapT = tex4.wrapS = tex4.wrapT = THREE.RepeatWrapping;
 	    tex1.repeat.set(rep1,2);
 	    tex2.repeat.set(rep1,4);
 	    tex3.repeat.set(rep2,0.45);
 	    tex4.repeat.set(rep1,2);
-	    //tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
+	    tex1.anisotropy = tex2.anisotropy = tex3.anisotropy = tex4.anisotropy = anisotropyNumber;
 
 	    obj.rotation.x = -Math.PI/2;
 	    scene.add(obj);
